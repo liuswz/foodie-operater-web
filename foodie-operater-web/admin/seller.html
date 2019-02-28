@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- 页面meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>商家管理</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+<link href="../css/zpageNav.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../css/element.min.css">
+ <script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
+ <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+
+ <script src="../js/vue.min.js"></script>
+<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+<script src="../js/element.min.js"></script>
+<script src="../js/zpageNav.js"></script>
+	
+    <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+    
+</head>
+
+<body class="hold-transition skin-red sidebar-mini"  >
+  <!-- .box-body -->
+  <section class="content" id="all">
+                <div class="box box-primary" >
+                    <div class="box-header with-border">
+                        <h3 class="box-title">商家管理</h3>
+                    </div>
+
+                    <div class="box-body">
+
+                        <!-- 数据表格 -->
+                        <div class="table-box">
+
+                            <!--工具栏/-->
+                               
+											 <div class="box-tools pull-right">
+                                <div class="has-feedback">
+							     
+									店铺名称： <input  type="text"  v-model="name" placeholder="菜品名称" value="">									
+									<button class="btn btn-default" @click="getDataByName">查询</button>                                    
+                                </div>
+                            </div>
+			                  <!--数据列表-->
+			                  <table id="dataList" class="table table-bordered table-striped table-hover dataTable">
+			                      <thead>
+			                          <tr>
+			                             
+										  <th class="sorting_asc">商家ID</th>
+									      <th class="sorting">商家用户名</th>
+									      <th class="sorting">店铺名称</th>
+									      <th class="sorting">地址</th>
+									      <th class="sorting">商铺电话</th>
+									      <th class="sorting">状态</th>										
+					                      <th class="text-center">操作</th>
+			                          </tr>
+			                      </thead>
+			                      <tbody>
+			                       <tr v-for="shop in shopList">
+			                                                            
+				                         <td>{{shop.id}}</td>
+										<td>{{shop.username}}</td>										
+										<td>{{shop.shopName}}</td>
+										<td>{{shop.shopAddress}}</td>
+										<td>{{shop.businessPhoto}}</td>
+										<td v-if="shop.orderStatus == 0">未审核</td>
+										<td v-else="shop.orderStatus == 1">已审核</td>
+		                                  <td class="text-center">                                           
+		                                 	  <button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#sellerModal" @click="detailShop(shop.id)">详情</button>                                           
+		                                                                            
+		                                 	  <button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#payModal" >支付</button>                                           
+		                                  </td>
+			                          </tr> 
+									  
+			                      </tbody>
+			                  </table>
+			                  <!--数据列表/-->                        
+				 
+                        </div>
+                        <!-- 数据表格 /-->
+                     </div>
+                    <!-- /.box-body -->
+            
+<!-- 商家详情 -->
+  <div class="modal fade" id="sellerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" >
+	<div class="modal-content">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel">商家详情</h3>
+		</div>
+		<div class="modal-body">							
+			
+			 <ul class="nav nav-tabs">
+			  <li class="active"><a href="#home" data-toggle="tab">基本信息</a></li>
+			  <li><a href="#linkman" data-toggle="tab">联系人</a></li>
+			  <li><a href="#certificate" data-toggle="tab">商家证件</a></li>
+			  <li><a href="#ceo" data-toggle="tab">法定代表人</a></li>
+			  <li><a href="#bank" data-toggle="tab">开户行</a></li>
+			</ul>							
+			
+			选项卡开始         
+		    <div id="myTabContent" class="tab-content">
+			    <div class="tab-pane active in" v-for="shopDetail in shopDetail" id="home">
+			      <br>
+			      <table class="table table-bordered table-striped"  width="800px">
+			      	<tr>
+			      		<td>商铺名称</td>
+			      		<td>{{shopDetail.shopName}}</td>
+			      	</tr>
+			      
+			      
+			      	<tr>
+			      		<td>商铺介绍</td>
+			      		<td>{{shopDetail.shopNotice}}</td>
+			      	</tr>
+			      	<tr>
+			      		<td>商铺图片</td>
+			      		<td><img  :src="shop.photo_url" width="50px" height="50px"></td>
+			      	</tr>
+			      	<tr>
+			      		<td>商铺详细地址</td>
+			      		<td>{{shopDetail.shopAddress}}</td>
+			      	</tr>
+			      </table>			      
+      			</div>	
+			    <div class="tab-pane fade" id="linkman">
+			    	<br>
+					<table class="table table-bordered table-striped" >
+			      	<tr>
+			      		<td>商家用户名</td>
+			      		<td>{{shopDetail.username}}</td>
+			      	</tr>
+
+			      	<tr>
+			      		<td>商家电话</td>
+			      		<td>{{shopDetail.shopPhone}}</td>
+			      	</tr>
+			      	<tr>
+			      		<td>商家E-Mail</td>
+			      		<td>{{shopDetail.shopEmail}</td>
+			      	</tr>
+			      </table>
+			    </div>
+			    <div class="tab-pane fade" id="certificate">
+					<br>
+					<table class="table table-bordered table-striped" >
+				      	<tr>
+				      		<td>营业执照</td>
+				      		<td><img  :src="shopDetail.businessPhoto" width="50px" height="50px"></td>
+				      	</tr>
+				      				      	
+			     	</table>
+			    </div>
+			    <div class="tab-pane fade" id="ceo">
+					<br>
+					<table class="table table-bordered table-striped" >
+				      	
+				      	<tr>
+				      		<td>法定代表人身份证号</td>
+				      		<td><img  :src="shopDetail.idcardPhoto" width="50px" height="50px"></td>
+				      	</tr>					   			      	
+			     	</table>
+			    </div>
+			    <div class="tab-pane fade" id="bank">
+					<br>
+					<table class="table table-bordered table-striped" >
+				      	
+				      	<tr>
+				      		<td>支付二维码</td>
+				      		<td><img  :src="shopDetail.payPhoto" width="50px" height="50px"></td>
+				      	</tr>		
+				      			   			      	
+			     	</table>					
+			    </div>
+  			    </div> 			
+     <!--       选项卡结束     -->      
+			
+			
+		</div>
+		<div class="modal-footer">						
+			<button class="btn btn-success" data-dismiss="modal" aria-hidden="true" @click="audit(shop.id)">审核通过</button>
+         	<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+		</div>
+	  </div>
+	</div>
+</div>
+ 
+ <div class="modal fade" id="payModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" >
+	<div class="modal-content">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel">支付</h3>
+		</div>
+		<div class="modal-body">							
+			 <ul class="nav nav-tabs">
+			  <li class="active"><a href="#pay" data-toggle="tab">支付二维码</a></li>
+			</ul>							
+			
+			选项卡开始         
+		    <div id="myTabContent" class="tab-content">
+			    <div class="tab-pane active in"  id="pay">
+			      <br>
+			      <div class="block" align="center">
+								<el-date-picker v-model="value9" type="daterange"
+									value-format="yyyy-MM-dd" start-placeholder="开始日期"
+									end-placeholder="结束日期" default-value="2019-2-21">
+									</el-date-picker>	
+										</div>
+			      		<button type="button" class="btn btn-default" title="查询" @click="date">
+												<i class="fa fa-refresh"></i> 查询
+											</button>
+											 </div>		
+				 <div  align="center">	<div>支付二维码</div>
+				      		<div><img  v-model="payPhoto"  :src="payPhoto" width="50px" height="50px"></div>     	
+				    
+				     <div  align="center" v-model="totalcost">	<div>支付总价格</div>
+				      		<div>{{totalcost}}</div>  
+      			</div>	
+      			  				
+			    </div>
+  				
+           选项卡结束          
+			
+			
+		</div>
+		<div class="modal-footer">						
+			<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+		</div>
+	  </div>
+	</div>
+</div>
+</div> 
+<div class="wrap" id="wrap">
+			<zpagenav v-bind:page="page" v-bind:page-size="pageSize"
+				v-bind:total="total" v-bind:max-page="maxPage"
+				v-on:pagehandler="pageHandler"> <zpagenav>
+		</div> 
+
+</div>
+</section>
+<!-- 正文区域 /-->
+	<script type="text/javascript">
+	
+	
+        new Vue({
+            el: '#all',
+            data: {
+                checked: false,
+                shopList: [],
+                shopDetail: [],
+                payPhoto:'',
+                payList: [],
+                totalcost: 1,
+                ids: [],
+                checkedAll: [],
+                page: 1,  //显示的是哪一页
+                pageSize: 10, //每一页显示的数据条数
+                total: 10, //记录总数
+                maxPage:2,
+                shopId:1,
+                value:'',
+                value9: '',
+                name: ''
+            },
+            created: function () {
+            	
+                this.maxPage=this.total/this.pageSize+1;
+                this.pageHandler(1);
+            },
+            methods: {
+                 detailShop(id){
+                	//alert(id);
+                	 this.$http.get('http://localhost:9527/operater/consumer/shopdetail/getById/'+id/* , {credentials: true } */)
+                     .then(function (response) {
+                         this.shopDetailList = response.body.Shop;   
+                     }, function (response) { 
+                         alert("发生错误")
+                     }); 
+                 },
+                 audit(id){
+                 	//alert(id);
+                 	 this.$http.get('http://localhost:9527/operator/consumer/shopdetail/updateStatus/'+id, {credentials: true })
+                      .then(function (response) {
+                         if( response.body.code){
+                        	 alert("授权成功");   
+                         }
+                                      
+                      }, function (response) { 
+                          alert("发生错误")
+                      }); 
+                  },
+                 pay(id){
+                 	//alert(id);
+                 	 this.$http.get('http://localhost:9527/operator/consumer/shopdetail/findPayPhoto/'+id, {credentials: true })
+                      .then(function (response) {
+                          this.payPhoto = response.body.payPhoto;                
+                      }, function (response) { 
+                          alert("发生错误")
+                      }); 
+                  },
+                //时间查询
+                date: function (){
+                	var time1 = JSON.stringify(this.value9).split(",")[0].split("[")[1].replace(/\"/g, "");;
+                	var time2 = JSON.stringify(this.value9).split(",")[1].split("]")[0].replace(/\"/g, "");;
+
+                    this.page = 1;
+                 
+          
+                    this.$http.post('http://localhost:9527/operator/consumer/shoporder/findTotalCost',
+                    		 {credentials: true }, {
+
+                        page: this.page,
+                        size: this.pageSize,
+                        fromTime: time1,
+                        toTime: time2,               
+                        shopId: this.shopId
+                        }, {
+                            emulateJSON: true
+                        }).then(function (response) {
+                        	
+
+                            this.totalcost = response.body.totalcost;
+                            alert(totalcost);
+                        }, function (response) {
+                            // 发生错误
+                          
+                            alert("发生错误")
+                        });
+                
+                },
+           //详情查询          
+                pageHandler: function (page) {
+                    //here you can do custom state update
+                    this.page = page;                    
+                   //http://localhost:9527/shop/consumer/shoporder/findAllOrder/1/5/23
+                    this.$http.get('http://localhost:9527/operater/consumer/shopdetail/findAllShop?page='+this.page+'&size='+this.pageSize+'&value'+this.name , {credentials: true } )
+                    .then(function (response) {
+                        this.shopList = response.body.rows;         
+                        this.total=response.body.total;                     
+                    }, function (response) {        
+                        alert("发生错误")
+                    }); 
+                    
+                }, 
+                getDataByName: function () {
+                    //here you can do custom state update
+                    this.page = 1;                    
+                   //http://localhost:9527/shop/consumer/shoporder/findAllOrder/1/5/23
+                    this.$http.get('http://localhost:9527/operater/consumer/shopdetail/findAllShop/?page='+this.page+'&size='+this.pageSize+'&value='+this.name/* , {credentials: true } */)
+                    .then(function (response) {
+                        this.shopList = response.body.rows;         
+                        this.total=response.body.total;                     
+                    }, function (response) {        
+                        alert("发生错误")
+                    }); 
+                    
+                }, 
+              
+            },
+            
+            watch: {
+                "ids": function () {
+                    if (this.ids.length == this.checkedAll.length) {
+                        this.checked = false
+                    } else {
+                        this.checked = true
+                    }
+                }
+            }
+        })
+
+    </script>
+
+
+</body>
+
+</html>
