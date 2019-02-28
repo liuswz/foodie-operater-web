@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="../css/style.css">
 <link href="../css/zpageNav.css" rel="stylesheet" />
 	<link rel="stylesheet" href="../css/element.min.css">
+	
+	
  <script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
  
 
@@ -69,7 +71,7 @@
 										<td>{{shop.username}}</td>										
 										<td>{{shop.shopName}}</td>
 										<td>{{shop.shopAddress}}</td>
-										<td>{{shop.businessPhoto}}</td>
+										<td>{{shop.shopPhone}}</td>
 										<td v-if="shop.orderStatus == 0">未审核</td>
 										<td v-else="shop.orderStatus == 1">已审核</td>
 		                                  <td class="text-center">                                           
@@ -107,7 +109,7 @@
 			  <li><a href="#bank" data-toggle="tab">开户行</a></li>
 			</ul>							
 			
-			选项卡开始         
+		
 		    <div id="myTabContent" class="tab-content">
 			    <div class="tab-pane active in" v-model="shopDetail" id="home">
 			      <br>
@@ -124,7 +126,7 @@
 			      	</tr>
 			      	<tr>
 			      		<td>商铺图片</td>
-			      		<td><img  :src="shopDetail.photo_url" width="50px" height="50px"></td>
+			      		<td><img  :src="shopDetail.photoUrl" width="300px" height="300px"></td>
 			      	</tr>
 			      	<tr>
 			      		<td>商铺详细地址</td>
@@ -146,7 +148,7 @@
 			      	</tr>
 			      	<tr>
 			      		<td>商家E-Mail</td>
-			      		<td>{{shopDetail.shopEmail}</td>
+			      		<td>{{shopDetail.shopEmail}}</td>
 			      	</tr>
 			      </table>
 			    </div>
@@ -155,7 +157,7 @@
 					<table class="table table-bordered table-striped" >
 				      	<tr>
 				      		<td>营业执照</td>
-				      		<td><img  :src="shopDetail.businessPhoto" width="50px" height="50px"></td>
+				      		<td><img  :src="shopDetail.businessPhoto" width="300px" height="300px"></td>
 				      	</tr>
 				      				      	
 			     	</table>
@@ -166,7 +168,7 @@
 				      	
 				      	<tr>
 				      		<td>法定代表人身份证号</td>
-				      		<td><img  :src="shopDetail.idcardPhoto" width="50px" height="50px"></td>
+				      		<td><img  :src="shopDetail.idcardPhoto" width="300px" height="300px"></td>
 				      	</tr>					   			      	
 			     	</table>
 			    </div>
@@ -176,7 +178,7 @@
 				      	
 				      	<tr>
 				      		<td>支付二维码</td>
-				      		<td><img  :src="shopDetail.payPhoto" width="50px" height="50px"></td>
+				      		<td><img  :src="shopDetail.payPhoto" width="300px" height="300px"></td>
 				      	</tr>		
 				      			   			      	
 			     	</table>					
@@ -204,9 +206,7 @@
 		<div class="modal-body">							
 			 <ul class="nav nav-tabs">
 			  <li class="active"><a href="#pay" data-toggle="tab">支付二维码</a></li>
-			</ul>							
-			
-			选项卡开始         
+			</ul>							    
 		    <div id="myTabContent" class="tab-content">
 			    <div class="tab-pane active in"  id="pay">
 			      <br>			    
@@ -219,17 +219,13 @@
 											</button>
 											 </div>		
 				 <div  align="center">	<div>支付二维码</div>
-				      		<div><img  v-model="payPhoto"  :src="payPhoto" width="50px" height="50px"></div>     	
+				      		<div><img  v-model="payPhoto"  :src="payPhoto" width="300px" height="300px"></div>     	
 				    
 				     <div  align="center" v-model="totalcost">	<div>支付总价格</div>
 				      		<div>{{totalcost}}</div>  
       			</div>	
       			  				
 			    </div>
-  				
-           选项卡结束          
-			
-			
 		</div>
 		<div class="modal-footer">						
 			<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
@@ -311,6 +307,7 @@
                       .then(function (response) {
                          if( response.body.code ==0){
                         	 alert("授权成功");   
+                        	 this.pageHandler(1);
                          }
                                       
                       }, function (response) { 
@@ -323,6 +320,7 @@
                         .then(function (response) {
                            if( response.body.code ==0){
                           	 alert("删除成功");   
+                          	 this.pageHandler(1);
                            }            
                         }, function (response) { 
                             alert("删除失败")
@@ -339,22 +337,15 @@
                       }); 
                   },
                 //时间查询
-               
                 	getDataByTime: function (){
                     	if(this.value9 == null){
                     		alert("请选择时间");
                     	}else{
                 	var time1 = JSON.stringify(this.value9).split(",")[0].split("[")[1].replace(/\"/g, "");;
                 	var time2 = JSON.stringify(this.value9).split(",")[1].split("]")[0].replace(/\"/g, "");;
-                    this.page = 1;
-                    this.$http.post('http://localhost:9527/operater/consumer/shoporder/findTotalCost'
+                  
+                    this.$http.post('http://localhost:9527/operater/consumer/shoporder/findTotalCost?fromTime='+time1+'&toTime='+time2+'&shopId='+this.shopId
                     		/*  {credentials: true } */, {
-                        page: this.page,
-                        size: this.pageSize,
-                        fromTime: time1,
-                        toTime: time2,               
-                        shopId: this.shopId
-                        }, {
                             emulateJSON: true
                         }).then(function (response) {
                         	
@@ -363,7 +354,7 @@
                           
                         }, function (response) {
                             // 发生错误
-                          
+                           
                             alert("发生错误")
                         });
                     	  }
