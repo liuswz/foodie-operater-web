@@ -81,6 +81,8 @@
 												@click="dateAndName">
 												<i class="fa fa-refresh"></i> 查询
 											</button>
+											
+											 <font size="5" v-model="totalCost" color="red">{{totalCost}}</font> 
 									</div>
 											
 							
@@ -97,8 +99,7 @@
 								class="table table-bordered table-striped table-hover dataTable">
 								<thead>
 									<tr>
-										
-
+									
 										<th class="sorting">订单号</th>
 										<th class="sorting">桌号</th>									
 										<th class="sorting">订单总价</th>	
@@ -181,7 +182,8 @@
                 shopId:shopId,
                 value:'',
                 value9: '',
-                name: ''
+                name: '',
+                totalCost: '',
             },
             created: function () {
          
@@ -206,7 +208,7 @@
                     this.page = 1;
                  
           
-                    this.$http.post('http://localhost:9527/operator/consumer/shoporder/findOrderByTimeAndValue'
+                    this.$http.post('http://localhost:9527/operater/consumer/shoporder/findOrderByTimeAndValue'
                     		/* ,{credentials: true },  */,{
 
                         page: this.page,
@@ -220,6 +222,7 @@
                         	
 
                             this.dishList = response.body.rows;
+                            this.totalCost = response.body.totalCost;
                            // alert(this.dishList);
                             this.total=response.body.total;
                         }, function (response) {
@@ -236,7 +239,7 @@
                     
                    //http://localhost:9527/shop/consumer/shoporder/findAllOrder/1/5/23
 
-                    this.$http.get('http://localhost:9527/operator/consumer/shoporder/findTotalOrders/'+this.page+'/'+this.pageSize/* , {credentials: true } */)
+                    this.$http.get('http://localhost:9527/operater/consumer/shoporder/findTotalOrders/'+this.page+'/'+this.pageSize/* , {credentials: true } */)
                     .then(function (response) {
                     	
                
