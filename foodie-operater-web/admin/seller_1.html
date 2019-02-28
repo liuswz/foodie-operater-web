@@ -239,127 +239,20 @@
         new Vue({
             el: '#all',
             data: {
-                checked: false,
-                shopList: [],
-                shopDetail: [],
-                payPhoto:'',
-                payList: [],
-                totalcost: 1,
-                ids: [],
-                checkedAll: [],
-                page: 1,  //显示的是哪一页
-                pageSize: 10, //每一页显示的数据条数
-                total: 10, //记录总数
-                maxPage:2,
-                shopId:1,
-                value:'',
-                value9: '',
-                name: ''
+               
             },
             created: function () {
             	
-                this.maxPage=this.total/this.pageSize+1;
-                this.pageHandler(1);
+               /*  this.maxPage=this.total/this.pageSize+1;
+                this.pageHandler(1); */
             },
             methods: {
-                 detailShop(id){
-                	//alert(id);
-                	 this.$http.get('http://localhost:9527/operater/consumer/shopdetail/getById/'+id/* , {credentials: true } */)
-                     .then(function (response) {
-                         this.shopDetailList = response.body.Shop;   
-                     }, function (response) { 
-                         alert("发生错误")
-                     }); 
-                 },
-                 audit(id){
-                 	//alert(id);
-                 	 this.$http.get('http://localhost:9527/operator/consumer/shopdetail/updateStatus/'+id, {credentials: true })
-                      .then(function (response) {
-                         if( response.body.code){
-                        	 alert("授权成功");   
-                         }
-                                      
-                      }, function (response) { 
-                          alert("发生错误")
-                      }); 
-                  },
-                 pay(id){
-                 	//alert(id);
-                 	 this.$http.get('http://localhost:9527/operator/consumer/shopdetail/findPayPhoto/'+id, {credentials: true })
-                      .then(function (response) {
-                          this.payPhoto = response.body.payPhoto;                
-                      }, function (response) { 
-                          alert("发生错误")
-                      }); 
-                  },
-                //时间查询
-                date: function (){
-                	var time1 = JSON.stringify(this.value9).split(",")[0].split("[")[1].replace(/\"/g, "");;
-                	var time2 = JSON.stringify(this.value9).split(",")[1].split("]")[0].replace(/\"/g, "");;
-
-                    this.page = 1;
                  
-          
-                    this.$http.post('http://localhost:9527/operator/consumer/shoporder/findTotalCost',
-                    		 {credentials: true }, {
-
-                        page: this.page,
-                        size: this.pageSize,
-                        fromTime: time1,
-                        toTime: time2,               
-                        shopId: this.shopId
-                        }, {
-                            emulateJSON: true
-                        }).then(function (response) {
-                        	
-
-                            this.totalcost = response.body.totalcost;
-                            alert(totalcost);
-                        }, function (response) {
-                            // 发生错误
-                          
-                            alert("发生错误")
-                        });
-                
-                },
-           //详情查询          
-                pageHandler: function (page) {
-                    //here you can do custom state update
-                    this.page = page;                    
-                   //http://localhost:9527/shop/consumer/shoporder/findAllOrder/1/5/23
-                    this.$http.get('http://localhost:9527/operater/consumer/shopdetail/findAllShop?page='+this.page+'&size='+this.pageSize+'&value'+this.name , {credentials: true } )
-                    .then(function (response) {
-                        this.shopList = response.body.rows;         
-                        this.total=response.body.total;                     
-                    }, function (response) {        
-                        alert("发生错误")
-                    }); 
-                    
-                }, 
-                getDataByName: function () {
-                    //here you can do custom state update
-                    this.page = 1;                    
-                   //http://localhost:9527/shop/consumer/shoporder/findAllOrder/1/5/23
-                    this.$http.get('http://localhost:9527/operater/consumer/shopdetail/findAllShop/?page='+this.page+'&size='+this.pageSize+'&value='+this.name/* , {credentials: true } */)
-                    .then(function (response) {
-                        this.shopList = response.body.rows;         
-                        this.total=response.body.total;                     
-                    }, function (response) {        
-                        alert("发生错误")
-                    }); 
-                    
-                }, 
               
             },
             
             watch: {
-                "ids": function () {
-                    if (this.ids.length == this.checkedAll.length) {
-                        this.checked = false
-                    } else {
-                        this.checked = true
-                    }
-                }
+                
             }
         })
 

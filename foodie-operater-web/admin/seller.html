@@ -15,7 +15,7 @@
 <link href="../css/zpageNav.css" rel="stylesheet" />
 	<link rel="stylesheet" href="../css/element.min.css">
  <script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
- <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+ 
 
  <script src="../js/vue.min.js"></script>
 <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
@@ -44,7 +44,7 @@
 											 <div class="box-tools pull-right">
                                 <div class="has-feedback">
 							     
-									店铺名称： <input  type="text"  v-model="name" placeholder="菜品名称" value="">									
+									店铺名称： <input  type="text"  v-model="name" placeholder="店铺名称：" value="">									
 									<button class="btn btn-default" @click="getDataByName">查询</button>                                    
                                 </div>
                             </div>
@@ -73,9 +73,10 @@
 										<td v-if="shop.orderStatus == 0">未审核</td>
 										<td v-else="shop.orderStatus == 1">已审核</td>
 		                                  <td class="text-center">                                           
-		                                 	  <button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#sellerModal" @click="detailShop(shop.id)">详情</button>                                           
+		                                 	  <button type="button" class="btn bg-olive btn-xs" data-toggle="modal"  @click="detailShop(shop.id)" data-target="#sellerModal">详情</button>                                           
 		                                                                            
-		                                 	  <button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#payModal" >支付</button>                                           
+		                                 	  <button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#payModal" @click="pay(shop.id)">支付</button>    
+		                                 	  <button type="button" class="btn bg-olive btn-xs" data-toggle="modal"  @click="boxShop(shop.id)">删除</button>                                         
 		                                  </td>
 			                          </tr> 
 									  
@@ -108,7 +109,7 @@
 			
 			选项卡开始         
 		    <div id="myTabContent" class="tab-content">
-			    <div class="tab-pane active in" v-for="shopDetail in shopDetail" id="home">
+			    <div class="tab-pane active in" v-model="shopDetail" id="home">
 			      <br>
 			      <table class="table table-bordered table-striped"  width="800px">
 			      	<tr>
@@ -123,7 +124,7 @@
 			      	</tr>
 			      	<tr>
 			      		<td>商铺图片</td>
-			      		<td><img  :src="shop.photo_url" width="50px" height="50px"></td>
+			      		<td><img  :src="shopDetail.photo_url" width="50px" height="50px"></td>
 			      	</tr>
 			      	<tr>
 			      		<td>商铺详细地址</td>
@@ -186,7 +187,7 @@
 			
 		</div>
 		<div class="modal-footer">						
-			<button class="btn btn-success" data-dismiss="modal" aria-hidden="true" @click="audit(shop.id)">审核通过</button>
+			<button class="btn btn-success" data-dismiss="modal" aria-hidden="true" @click="audit(shopDetail.id)">审核通过</button>
          	<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
 		</div>
 	  </div>
@@ -208,14 +209,12 @@
 			选项卡开始         
 		    <div id="myTabContent" class="tab-content">
 			    <div class="tab-pane active in"  id="pay">
-			      <br>
-			      <div class="block" align="center">
+			      <br>			    
 								<el-date-picker v-model="value9" type="daterange"
 									value-format="yyyy-MM-dd" start-placeholder="开始日期"
 									end-placeholder="结束日期" default-value="2019-2-21">
-									</el-date-picker>	
-										</div>
-			      		<button type="button" class="btn btn-default" title="查询" @click="date">
+									</el-date-picker>		
+			      		<button type="button" class="btn btn-default" title="查询" @click="getDataByTime">
 												<i class="fa fa-refresh"></i> 查询
 											</button>
 											 </div>		
@@ -278,19 +277,39 @@
             },
             methods: {
                  detailShop(id){
-                	//alert(id);
+                	
                 	 this.$http.get('http://localhost:9527/operater/consumer/shopdetail/getById/'+id/* , {credentials: true } */)
                      .then(function (response) {
-                         this.shopDetailList = response.body.Shop;   
+                    	 console.info(response.body.data);
+                    	 this.shopDetail = response.data;   
+                         
                      }, function (response) { 
                          alert("发生错误")
                      }); 
                  },
+                 boxShop(id){
+                 
+                   	  this.$confirm('是否删除?', '提示', {
+       			          confirmButtonText: '确定',
+       			          cancelButtonText: '取消',
+       			          type: 'warning'
+       			        }).then(() => {
+       			        	status=1; 
+       			          this.deleteShop(id);
+       			        }).catch(() => {
+       			          this.$message({
+       			            type: 'info',
+       			            message: '取消'
+       			          });          
+       			        });
+                   	   	              		
+                   
+                   }, 
                  audit(id){
                  	//alert(id);
-                 	 this.$http.get('http://localhost:9527/operator/consumer/shopdetail/updateStatus/'+id, {credentials: true })
+                 	 this.$http.get('http://localhost:9527/operater/consumer/shopdetail/updateStatus/'+id/* , {credentials: true } */)
                       .then(function (response) {
-                         if( response.body.code){
+                         if( response.body.code ==0){
                         	 alert("授权成功");   
                          }
                                       
@@ -298,26 +317,38 @@
                           alert("发生错误")
                       }); 
                   },
+                  deleteShop(id){
+                   	//alert(id);
+                   	 this.$http.get('http://localhost:9527/operator/consumer/shopdetail/deleteShop/'+id/* , {credentials: true } */)
+                        .then(function (response) {
+                           if( response.body.code ==0){
+                          	 alert("删除成功");   
+                           }            
+                        }, function (response) { 
+                            alert("删除失败")
+                        }); 
+                    },
                  pay(id){
                  	//alert(id);
-                 	 this.$http.get('http://localhost:9527/operator/consumer/shopdetail/findPayPhoto/'+id, {credentials: true })
+                 	 this.$http.get('http://localhost:9527/operater/consumer/shopdetail/findPayPhoto/'+id/* , {credentials: true } */)
                       .then(function (response) {
-                          this.payPhoto = response.body.payPhoto;                
+                          this.payPhoto = response.body.payPhoto; 
+                          console.info(response.body);
                       }, function (response) { 
                           alert("发生错误")
                       }); 
                   },
                 //时间查询
-                date: function (){
+               
+                	getDataByTime: function (){
+                    	if(this.value9 == null){
+                    		alert("请选择时间");
+                    	}else{
                 	var time1 = JSON.stringify(this.value9).split(",")[0].split("[")[1].replace(/\"/g, "");;
                 	var time2 = JSON.stringify(this.value9).split(",")[1].split("]")[0].replace(/\"/g, "");;
-
                     this.page = 1;
-                 
-          
-                    this.$http.post('http://localhost:9527/operator/consumer/shoporder/findTotalCost',
-                    		 {credentials: true }, {
-
+                    this.$http.post('http://localhost:9527/operater/consumer/shoporder/findTotalCost'
+                    		/*  {credentials: true } */, {
                         page: this.page,
                         size: this.pageSize,
                         fromTime: time1,
@@ -327,15 +358,15 @@
                             emulateJSON: true
                         }).then(function (response) {
                         	
-
+                        	console.info(response.body.totalcost);
                             this.totalcost = response.body.totalcost;
-                            alert(totalcost);
+                          
                         }, function (response) {
                             // 发生错误
                           
                             alert("发生错误")
                         });
-                
+                    	  }
                 },
            //详情查询          
                 pageHandler: function (page) {
