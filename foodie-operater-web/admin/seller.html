@@ -126,7 +126,7 @@
 			      	</tr>
 			      	<tr>
 			      		<td>商铺图片</td>
-			      		<td><img  :src="shopDetail.photoUrl" width="300px" height="300px"></td>
+			      		<td><img  :src="shopDetail.photoUrl" width="500px" height="500px"></td>
 			      	</tr>
 			      	<tr>
 			      		<td>商铺详细地址</td>
@@ -157,7 +157,7 @@
 					<table class="table table-bordered table-striped" >
 				      	<tr>
 				      		<td>营业执照</td>
-				      		<td><img  :src="shopDetail.businessPhoto" width="300px" height="300px"></td>
+				      		<td><img  :src="shopDetail.businessPhoto" width="500px" height="500px"></td>
 				      	</tr>
 				      				      	
 			     	</table>
@@ -168,7 +168,7 @@
 				      	
 				      	<tr>
 				      		<td>法定代表人身份证号</td>
-				      		<td><img  :src="shopDetail.idcardPhoto" width="300px" height="300px"></td>
+				      		<td><img  :src="shopDetail.idcardPhoto" width="500px" height="500px"></td>
 				      	</tr>					   			      	
 			     	</table>
 			    </div>
@@ -178,7 +178,7 @@
 				      	
 				      	<tr>
 				      		<td>支付二维码</td>
-				      		<td><img  :src="shopDetail.payPhoto" width="300px" height="300px"></td>
+				      		<td><img  :src="shopDetail.payPhoto" width="500px" height="500px"></td>
 				      	</tr>		
 				      			   			      	
 			     	</table>					
@@ -209,7 +209,8 @@
 			</ul>							    
 		    <div id="myTabContent" class="tab-content">
 			    <div class="tab-pane active in"  id="pay">
-			      <br>			    
+			      <br>			
+			          <div  align="center">	
 								<el-date-picker v-model="value9" type="daterange"
 									value-format="yyyy-MM-dd" start-placeholder="开始日期"
 									end-placeholder="结束日期" default-value="2019-2-21">
@@ -218,18 +219,21 @@
 												<i class="fa fa-refresh"></i> 查询
 											</button>
 											 </div>		
-				 <div  align="center">	<div>支付二维码</div>
-				      		<div><img  v-model="payPhoto"  :src="payPhoto" width="300px" height="300px"></div>     	
+							<div>		
+							</div>	 
+							   <br>	
+							      <br>	
+				      <div  align="center">	
+				      		<div><img  v-model="payPhoto"  :src="payPhoto" width="200px" height="200px"></div>     	
 				    
-				     <div  align="center" v-model="totalcost">	<div>支付总价格</div>
-				      		<div>{{totalcost}}</div>  
+				     <div  align="center" v-model="totalcost">	<div><font size="5"> 支付总价格 </font></div>
+				      		<div> <font size="5">{{totalcost}}</font></div>  
+				      		
       			</div>	
       			  				
 			    </div>
 		</div>
-		<div class="modal-footer">						
-			<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
-		</div>
+		
 	  </div>
 	</div>
 </div>
@@ -316,7 +320,7 @@
                   },
                   deleteShop(id){
                    	//alert(id);
-                   	 this.$http.get('http://localhost:9527/operator/consumer/shopdetail/deleteShop/'+id/* , {credentials: true } */)
+                   	 this.$http.get('http://localhost:9527/operater/consumer/shopdetail/deleteShop/'+id/* , {credentials: true } */)
                         .then(function (response) {
                            if( response.body.code ==0){
                           	 alert("删除成功");   
@@ -330,7 +334,7 @@
                  	//alert(id);
                  	 this.$http.get('http://localhost:9527/operater/consumer/shopdetail/findPayPhoto/'+id/* , {credentials: true } */)
                       .then(function (response) {
-                          this.payPhoto = response.body.payPhoto; 
+                          this.payPhoto = response.body.result; 
                           console.info(response.body);
                       }, function (response) { 
                           alert("发生错误")
