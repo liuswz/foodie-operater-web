@@ -168,7 +168,7 @@
                 
                 getData: function () {
          
-                    this.$http.get('http://localhost:9527/operator/consumer/shoporder/findOrderItem/'+
+                    this.$http.get('http://localhost:9527/operater/consumer/shoporder/findOrderItem/'+
                         this.orderId +'/'+this.shopId, /* {credentials: true } */).then(function (response) {
                         this.dishList = response.body;           
                     }, function (response) {
