@@ -50,15 +50,14 @@
                     var username = response.result; 
                  
                     $("#name").html(username);
-    		        $("#name1").html(username);   
-    		        $.cookie('shopId',data.id);   
+    		        $("#name1").html(username);      
                    }
                  
                   
     		      
                  },            
                 error: function(err) {    
-
+                	 window.location.href="../login.html";  
                  //   window.location.href="http://127.0.0.1:9527/shop/common/gotoAdmin";           
 
                     console.error(err)            
