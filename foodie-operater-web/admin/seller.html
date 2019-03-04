@@ -253,7 +253,7 @@
 <!-- 正文区域 /-->
 	<script type="text/javascript">
 	
-	
+	var shopId =  $.cookie('shopId');
         new Vue({
             el: '#all',
             data: {
@@ -269,7 +269,7 @@
                 pageSize: 10, //每一页显示的数据条数
                 total: 10, //记录总数
                 maxPage:2,
-                shopId:1,
+                shopId: shopId,
                 value:'',
                 value9: '',
                 name: ''
