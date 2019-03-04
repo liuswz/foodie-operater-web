@@ -28,7 +28,47 @@
 		  		iframeid.height =document.documentElement.clientHeight;			   	   
 			  }
 		 }
-    
+         window.onload=function(){
+             console.info("http://127.0.0.1:9527/operater/consumer/shopdetail/getUsername");
+            $.ajax({         
+
+                url: "http://localhost:9527/operater/consumer/shopdetail/getUsername",
+                type: 'GET',       
+                dataType: "json",//预期服务器返回的数据类型
+                xhrFields:{
+                    withCredentials:true
+                },
+                crossDomain:true,
+                success: function(response) {
+                  //  window.location.href="http://foodie.com:9527/shop/common/gotoAdmin";  
+                  console.info(response.code);
+                  
+                   if(response.code == 1){
+                      
+                	   window.location.href="../login.html";  
+                   }else{
+                    var username = response.result; 
+                 
+                    $("#name").html(username);
+    		        $("#name1").html(username);      
+                   }
+                 
+                  
+    		      
+                 },            
+                error: function(err) {    
+
+                 //   window.location.href="http://127.0.0.1:9527/shop/common/gotoAdmin";           
+
+                    console.error(err)            
+                }        
+                })
+
+            	 
+            	
+            //  });  
+             
+         }
 	</script>    
  
 </head>
