@@ -372,7 +372,7 @@
                 	var time1 = JSON.stringify(this.value9).split(",")[0].split("[")[1].replace(/\"/g, "");;
                 	var time2 = JSON.stringify(this.value9).split(",")[1].split("]")[0].replace(/\"/g, "");;
                   
-                    this.$http.get('http://localhost:9527/operater/consumer/shoporder/findTotalCost?fromTime='+time1+'&toTime='+time2+'&shopId'+id
+                    this.$http.get('http://localhost:9527/operater/consumer/shoporder/findTotalCost?fromTime='+time1+'&toTime='+time2+'&shopId='+id
                     		  ,{credentials: true } , {
                             emulateJSON: true
                         }).then(function (response) {
