@@ -229,6 +229,10 @@
 				     <div  align="center" v-model="totalcost">	<div><font size="5"> 支付总价格 </font></div>
 				      		<div> <font size="5">{{totalcost}}</font></div>  
 				      		
+				        <div  align="center" ></div>
+				        		                                 	
+				      		<div><button type="button" class="btn bg-olive btn-xs"  @click="payOK(shop.id)">支付成功</button>                                         </div>  		
+				      		
       			</div>	
       			  				
 			    </div>
@@ -330,12 +334,31 @@
                             alert("删除失败")
                         }); 
                     },
+                    
+                    payOK(id){
+                    	if(this.value9 == null){
+                    		alert("请选择时间");
+                    	}else{
+                	var time1 = JSON.stringify(this.value9).split(",")[0].split("[")[1].replace(/\"/g, "");;
+                	var time2 = JSON.stringify(this.value9).split(",")[1].split("]")[0].replace(/\"/g, "");;
+                  
+                    	this.$http.get('http://localhost:9527/operater/consumer/shopdetail/updatOrderIfTranster?shopId='+this.shopId+'&fromTime='+time1+'&toTime='+time2, {credentials: true })
+                        .then(function (response) {
+                           
+                            console.info(response.body);
+                            alert("支付成功");
+                        }, function (response) { 
+                            alert("发生错误")
+                        }); 
+                    	}
+                    },
                  pay(id){
                  	//alert(id);
                  	 this.$http.get('http://localhost:9527/operater/consumer/shopdetail/findPayPhoto/'+id, {credentials: true })
                       .then(function (response) {
                           this.payPhoto = response.body.result; 
                           console.info(response.body);
+                     
                       }, function (response) { 
                           alert("发生错误")
                       }); 
@@ -348,7 +371,7 @@
                 	var time1 = JSON.stringify(this.value9).split(",")[0].split("[")[1].replace(/\"/g, "");;
                 	var time2 = JSON.stringify(this.value9).split(",")[1].split("]")[0].replace(/\"/g, "");;
                   
-                    this.$http.post('http://localhost:9527/operater/consumer/shoporder/findTotalCost?fromTime='+time1+'&toTime='+time2+'&shopId='+this.shopId
+                    this.$http.get('http://localhost:9527/operater/consumer/shoporder/findTotalCost?fromTime='+time1+'&toTime='+time2+'&shopId='+this.shopId
                     		  ,{credentials: true } , {
                             emulateJSON: true
                         }).then(function (response) {
