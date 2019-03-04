@@ -366,9 +366,10 @@
            //详情查询          
                 pageHandler: function (page) {
                     //here you can do custom state update
-                    this.page = page;                    
+                    this.page = page;   
+                    var nam = this.name.trim();
                    //http://localhost:9527/shop/consumer/shoporder/findAllOrder/1/5/23
-                    this.$http.get('http://localhost:9527/operater/consumer/shopdetail/findAllShop?page='+this.page+'&size='+this.pageSize+'&value'+this.name , {credentials: true } )
+                    this.$http.get('http://localhost:9527/operater/consumer/shopdetail/findAllShop?page='+this.page+'&size='+this.pageSize+'&value'+nam , {credentials: true } )
                     .then(function (response) {
                         this.shopList = response.body.rows;         
                         this.total=response.body.total;                     
@@ -379,9 +380,10 @@
                 }, 
                 getDataByName: function () {
                     //here you can do custom state update
-                    this.page = 1;                    
+                    this.page = 1;            
+                    var nam = this.name.trim();
                    //http://localhost:9527/shop/consumer/shoporder/findAllOrder/1/5/23
-                    this.$http.get('http://localhost:9527/operater/consumer/shopdetail/findAllShop/?page='+this.page+'&size='+this.pageSize+'&value='+this.name , {credentials: true } )
+                    this.$http.get('http://localhost:9527/operater/consumer/shopdetail/findAllShop/?page='+this.page+'&size='+this.pageSize+'&value='+nam , {credentials: true } )
                     .then(function (response) {
                         this.shopList = response.body.rows;         
                         this.total=response.body.total;                     
