@@ -209,7 +209,7 @@
                  
           
                     this.$http.post('http://localhost:9527/operater/consumer/shoporder/findOrderByTimeAndValue'
-                    		/* ,{credentials: true },  */,{
+                    		 ,{credentials: true }, {
 
                         page: this.page,
                         size: this.pageSize,
@@ -239,7 +239,7 @@
                     
                    //http://localhost:9527/shop/consumer/shoporder/findAllOrder/1/5/23
 
-                    this.$http.get('http://localhost:9527/operater/consumer/shoporder/findTotalOrders/'+this.page+'/'+this.pageSize/* , {credentials: true } */)
+                    this.$http.get('http://localhost:9527/operater/consumer/shoporder/findTotalOrders/'+this.page+'/'+this.pageSize, {credentials: true } )
                     .then(function (response) {
                     	
                

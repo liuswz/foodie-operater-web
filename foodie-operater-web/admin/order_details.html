@@ -169,7 +169,7 @@
                 getData: function () {
          
                     this.$http.get('http://localhost:9527/operater/consumer/shoporder/findOrderItem/'+
-                        this.orderId +'/'+this.shopId, /* {credentials: true } */).then(function (response) {
+                        this.orderId +'/'+this.shopId,  {credentials: true } ).then(function (response) {
                         this.dishList = response.body;           
                     }, function (response) {
                         // 发生错误
