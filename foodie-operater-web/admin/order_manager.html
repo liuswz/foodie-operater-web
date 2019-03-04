@@ -208,7 +208,7 @@
                     this.page = 1;
                  
           
-                    this.$http.get('http://localhost:9527/operater/consumer/shoporder/findOrderByTimeAndValue?page='+this.page+'&size='+this.pageSize+'&fromTime='+time1+'&toTime='+time2+'&value=' this.name
+                    this.$http.get('http://localhost:9527/operater/consumer/shoporder/findOrderByTimeAndValue?page='+this.page+'&size='+this.pageSize+'&fromTime='+time1+'&toTime='+time2+'&value='+this.name
                     		 ,{credentials: true }, {
                             emulateJSON: true
                         }).then(function (response) {
