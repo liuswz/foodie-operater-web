@@ -161,6 +161,7 @@
           	 // console.info(JSON.stringify(id.cost));
                 this.orderId = id.split("&")[0];
                 this.shopId = id.split("&")[1];
+                console.info( this.shopId);
                 this.getData();
                
             },
@@ -174,7 +175,7 @@
                         this.dishList = response.body;           
                     }, function (response) {
                         // 发生错误
-                      
+                      console.info(response);
                         alert("发生错误")
                     }); 
                     

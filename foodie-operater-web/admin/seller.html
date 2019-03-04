@@ -71,8 +71,8 @@
 										<td>{{shop.shopName}}</td>
 										<td>{{shop.shopAddress}}</td>
 										<td>{{shop.shopPhone}}</td>
-										<td v-if="shop.orderStatus == 0">未审核</td>
-										<td v-else="shop.orderStatus == 1">已审核</td>
+										<td v-if="shop.shopStatus == 0">未审核</td>
+										<td v-else="shop.shopStatus == 1">已审核</td>
 		                                  <td class="text-center">                                           
 		                                 	  <button type="button" class="btn bg-olive btn-xs" data-toggle="modal"  @click="detailShop(shop.id)" data-target="#sellerModal">详情</button>                                           
 		                                                                            
@@ -377,8 +377,8 @@
                             emulateJSON: true
                         }).then(function (response) {
                         	
-                        	console.info(response.body.totalcost);
-                            this.totalcost = response.body.totalcost;
+                        	//console.info(response.body.result);
+                            this.totalcost = response.body.result;
                           
                         }, function (response) {
                             // 发生错误
