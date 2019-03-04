@@ -137,7 +137,7 @@
     <!-- 正文区域 /-->
     <script type="text/javascript">
   
-   var shopId = 23;
+  //var shopId = 23;
         new Vue({
             el: '#all',
             data: {
@@ -149,7 +149,7 @@
                 pageSize: 10, //每一页显示的数据条数
                 total: 10, //记录总数
                 maxPage:2,
-                shopId:shopId,
+                shopId:1,
                 value:'',
                 orderId : 0
             },
@@ -160,7 +160,7 @@
           	   var id = decodeURI(loc.substr(n2+1, n1-n2));//从=号后面的内容
           	 // console.info(JSON.stringify(id.cost));
                 this.orderId = id.split("&")[0];
-                this.shopId = id.split("&")[1];
+                this.shopId = id.split("&shopId=")[1];
                 console.info( this.shopId);
                 this.getData();
                
