@@ -81,25 +81,26 @@
 <script type="text/javascript" src="js/plugins/jquery-placeholder/jquery.placeholder.min.js"></script>
 <script src="js/pages/jquery.slideunlock.js"></script>
 <script>
-	
+
 	function login() {
+		
         $.ajax({
         //几个参数需要注意一下
             type: "POST",//方法类型
             dataType: "json",//预期服务器返回的数据类型
-            url: "http://localhost:9527/operater/consumer/shopdetail/login",
+            url: "http://localhost/operaterconsumer/shopdetail/login",
 			xhrFields:{
 				withCredentials:true
 			},
             data: $('#form').serialize(),
 		
 			crossDomain:true,
-            success: function (result) {
-                console.log(result);//打印服务端返回的数据(调试用)
-                if (result.code == 0) {	
+            success: function (response) {
+                console.log(response);//打印服务端返回的数据(调试用)
+                if (response.code == 0) {	
 					window.location.href="admin/index.html";  
                   //  alert("SUCCESS");
-                 
+				  
                 }else{
                 	alert("用户名或密码错误！");
                 };

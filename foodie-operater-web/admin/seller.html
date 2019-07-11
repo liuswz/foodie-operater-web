@@ -12,16 +12,17 @@
     <link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
     <link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
     <link rel="stylesheet" href="../css/style.css">
-<link href="../css/zpageNav.css" rel="stylesheet" />
+	<link href="../css/zpageNav.css" rel="stylesheet" />
 	<link rel="stylesheet" href="../css/element.min.css">
-
- <script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
- 
-
- <script src="../js/vue.min.js"></script>
-<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
-<script src="../js/element.min.js"></script>
-<script src="../js/zpageNav.js"></script>
+	<!-- 城市选择 -->
+	<link rel="stylesheet" type="text/css" href="../css/cityPicker.css">
+	<link rel="stylesheet" type="text/css" href="../css/seller.css">
+	
+ 	<script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
+ 	<script src="../js/vue.min.js"></script>
+	<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+	<script src="../js/element.min.js"></script>
+	<script src="../js/zpageNav.js"></script>
 	
     <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
     
@@ -42,41 +43,63 @@
 
                             <!--工具栏/-->
                                
-											 <div class="box-tools pull-right">
-                                <div class="has-feedback">
+							<div class="box-tools pull-right" style="width:100%;position: relative;">
+								<div class="search_div">
+									<input type="text"  v-model="searchPropertyDto.shopCity" name="shopCity"  placeholder="请输入城市名" id="cityChoice"/>
+	
+									<input type="hidden" id="province" value="">
+									<input type="hidden" id="city" value="">
+									<input type="checkbox" name="checkbox1" v-model="ifCheck" />已审核
+									<input type="checkbox" name="checkbox1" v-model="ifOperate"  />已运营
+									<button class="btn btn-default" @click="searchData">查询</button>  
+								</div>
+
+							
+
+                                <div class="has-feedback" style="float: right;">
 							     
-									店铺名称： <input  type="text"  v-model="name" placeholder="店铺名称：" value="">									
+									店铺名称： <input  type="text"  v-model.trim="name" placeholder="店铺名称：" value="">									
 									<button class="btn btn-default" @click="getDataByName">查询</button>                                    
-                                </div>
+								</div>
+								<div class="voucher_div" >
+										<!-- <button class="btn btn-default"    @click="addShopType">添加商户类型</button>  -->
+										<button class="btn btn-default"  data-toggle="modal" data-target="#voucherModal">发代金卷</button>  
+								</div>
                             </div>
 			                  <!--数据列表-->
 			                  <table id="dataList" class="table table-bordered table-striped table-hover dataTable">
 			                      <thead>
 			                          <tr>
-			                             
-										  <th class="sorting_asc">商家ID</th>
-									      <th class="sorting">商家用户名</th>
+										  <th class="" style="padding-right:0px">
+											<input id="selall" type="checkbox" v-model="checked" @click="changeAllChecked()" class="icheckbox_square-blue">
+										  </th>
+										  <th class="sorting_asc" >商家ID</th>
+									      <!-- <th class="sorting">商家用户名</th> -->
 									      <th class="sorting">店铺名称</th>
-									      <th class="sorting">地址</th>
+									      <th class="sorting">城市</th>
 									      <th class="sorting">商铺电话</th>
-									      <th class="sorting">状态</th>										
-					                      <th class="text-center">操作</th>
+										  <th class="sorting">审核状态</th>		
+										  <th class="sorting">运营状态</th>									
+					                      <th class="text-center" width=220px>操作</th>
 			                          </tr>
 			                      </thead>
 			                      <tbody>
 			                       <tr v-for="shop in shopList">
-			                                                            
+										<td><input type="checkbox" :value="shop.id" v-model="ids"></td>                  
 				                         <td>{{shop.id}}</td>
-										<td>{{shop.username}}</td>										
+										<!-- <td>{{shop.username}}</td>										 -->
 										<td>{{shop.shopName}}</td>
-										<td>{{shop.shopAddress}}</td>
+										<td>{{shop.shopCity}}</td>
 										<td>{{shop.shopPhone}}</td>
 										<td v-if="shop.shopStatus == 0">未审核</td>
 										<td v-else="shop.shopStatus == 1">已审核</td>
+										<td v-if="shop.operateStatus == 0">未运营</td>
+										<td v-else="shop.operateStatus == 1">已运营</td>  
 		                                  <td class="text-center">                                           
 		                                 	  <button type="button" class="btn bg-olive btn-xs" data-toggle="modal"  @click="detailShop(shop.id)" data-target="#sellerModal">详情</button>                                           
-		                                                                            
-		                                 	  <button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#payModal" @click="pay(shop.id)">支付</button>    
+											   <button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#payModal" @click="pay(shop.id)">支付</button> 
+											   
+											   <button type="button" class="btn bg-olive btn-xs" data-toggle="modal"  @click="checkVoucher(shop.id)">查代金卷</button>       
 		                                 	  <button type="button" class="btn bg-olive btn-xs" data-toggle="modal"  @click="boxShop(shop.id)">删除</button>                                         
 		                                  </td>
 			                          </tr> 
@@ -93,7 +116,7 @@
 <!-- 商家详情 -->
   <div class="modal fade" id="sellerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" >
-	<div class="modal-content">
+	<div class="modal-content" style="width:700px; height:750px;">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 			<h3 id="myModalLabel">商家详情</h3>
@@ -112,21 +135,22 @@
 		    <div id="myTabContent" class="tab-content">
 			    <div class="tab-pane active in" v-model="shopDetail" id="home">
 			      <br>
-			      <table class="table table-bordered table-striped"  width="800px">
+			      <table class="table table-bordered table-striped"  >
 			      	<tr>
 			      		<td>商铺名称</td>
 			      		<td>{{shopDetail.shopName}}</td>
 			      	</tr>
 			      
 			      
-			      	<tr>
-			      		<td>商铺介绍</td>
-			      		<td>{{shopDetail.shopNotice}}</td>
-			      	</tr>
+			      
 			      	<tr>
 			      		<td>商铺图片</td>
-			      		<td><img  :src="shopDetail.photoUrl" width="500px" height="500px"></td>
-			      	</tr>
+			      		<td><img  :src="shopDetail.photoUrl" width="350px" height="350px"></td>
+					</tr>
+					<tr>
+						<td>商铺城市</td>
+						<td>{{shopDetail.shopCity}}</td>
+					</tr>
 			      	<tr>
 			      		<td>商铺详细地址</td>
 			      		<td>{{shopDetail.shopAddress}}</td>
@@ -156,7 +180,7 @@
 					<table class="table table-bordered table-striped" >
 				      	<tr>
 				      		<td>营业执照</td>
-				      		<td><img  :src="shopDetail.businessPhoto" width="500px" height="500px"></td>
+				      		<td><img  :src="shopDetail.businessPhoto" width="350px" height="350px"></td>
 				      	</tr>
 				      				      	
 			     	</table>
@@ -167,7 +191,7 @@
 				      	
 				      	<tr>
 				      		<td>法定代表人身份证号</td>
-				      		<td><img  :src="shopDetail.idcardPhoto" width="500px" height="500px"></td>
+				      		<td><img  :src="shopDetail.idcardPhoto" width="350px" height="350px"></td>
 				      	</tr>					   			      	
 			     	</table>
 			    </div>
@@ -177,7 +201,7 @@
 				      	
 				      	<tr>
 				      		<td>支付二维码</td>
-				      		<td><img  :src="shopDetail.payPhoto" width="500px" height="500px"></td>
+				      		<td><img  :src="shopDetail.payPhoto" width="350px" height="350px"></td>
 				      	</tr>		
 				      			   			      	
 			     	</table>					
@@ -197,7 +221,7 @@
  
  <div class="modal fade" id="payModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" >
-	<div class="modal-content">
+	<div class="modal-content"  style="width:600px; height:550px;">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 			<h3 id="myModalLabel">支付</h3>
@@ -212,9 +236,9 @@
 			          <div  align="center">	
 								<el-date-picker v-model="value9" type="daterange"
 									value-format="yyyy-MM-dd" start-placeholder="开始日期"
-									end-placeholder="结束日期" default-value="2019-2-21">
+									end-placeholder="结束日期" >
 									</el-date-picker>		
-			      		<button type="button" class="btn btn-default"  title="查询" @click="getDataByTime()">
+			      		<button type="button" class="btn btn-default" v-model="shopId" title="查询" @click="getDataByTime(shopId)">
 												<i class="fa fa-refresh"></i> 查询
 											</button>
 											 </div>		
@@ -225,7 +249,7 @@
 				      <div  align="center">	
 				      		<div><img  v-model="payPhoto"  :src="payPhoto" width="200px" height="200px"></div>     	
 				    
-				     <div  align="center" v-model="totalcost">	<div><font size="5"> 支付总价格 </font></div>
+				     <div  align="center" v-model="totalcost">	<div><font size="2"> 支付总价格 </font></div>
 				      		<div> <font size="5">{{totalcost}}元</font></div>  
 				      		
 				        <div  align="center" ></div>
@@ -242,6 +266,54 @@
 </div>
 </div> 
 </div>
+
+
+
+<div class="modal fade" id="voucherModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg" >
+		  <div class="modal-content"  style="width:500px; height:350px;">
+			  <div class="modal-header">
+				  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				  <h3 id="myModalLabel">代金卷</h3>
+			  </div>
+			  <div class="modal-body">							
+				   <ul class="nav nav-tabs">
+					<li class="active"><a href="#pay" data-toggle="tab">发代金卷</a></li>
+				  </ul>							    
+				  <div id="myTabContent" class="tab-content">
+					  <div class="tab-pane active in"  id="pay">
+						<br>			
+							<div  align="center">	
+								开始截至日期：<el-date-picker type="daterange" v-model="voucherTime"
+									value-format="yyyy-MM-dd" start-placeholder="开始日期"
+									end-placeholder="结束日期">
+								</el-date-picker>		
+								
+							</div>		
+								   
+								
+						  
+						   <div  align="center" >	
+									<div>
+										代金卷金额:<input type="text" v-model.trim="voucherMoney"  placeholder="代金卷金额" class="voucherMoney_input">							   
+									</div>
+									<div>
+										<button type="button" class="btn bg-olive btn-xs" style="width: 55px;height: 30px;font-size: 18sp;" @click="giveVoucher">发放</button>          
+									</div>  		
+									
+							</div>	
+										  
+					  </div>
+			  </div>
+			  
+			</div>
+		  </div>
+	  </div>
+	</div> 
+</div>
+
+
+
 <div class="wrap" id="wrap">
 			<zpagenav v-bind:page="page" v-bind:page-size="pageSize"
 				v-bind:total="total" v-bind:max-page="maxPage"
@@ -251,10 +323,26 @@
 
 </section>
 <!-- 正文区域 /-->
-	<script type="text/javascript">
+
+<script type="text/javascript" src="../js/cityData.js"></script>
+<script type="text/javascript" src="../js/cityPicker.js"></script>
+<script type="text/javascript">
+ window.onload=function(){
+	var cityPicker = new IIInsomniaCityPicker({
+				data: cityData,
+				target: '#cityChoice',
+				valType: 'k-v',
+				hideCityInput: '#city',
+				hideProvinceInput: '#province',
+				callback: function(city){
+					app.searchPropertyDto.shopCity = $("#cityChoice").val();
+				}
+			});
+			cityPicker.init();
+ }
 	
 //	var shopId =  $.cookie('shopId');
-        new Vue({
+        var app =new Vue({
             el: '#all',
             data: {
                 checked: false,
@@ -263,7 +351,7 @@
                 payPhoto:'',
                 payList: [],
                 totalcost: 0,
-                ids: [],
+              
                 checkedAll: [],
                 page: 1,  //显示的是哪一页
                 pageSize: 10, //每一页显示的数据条数
@@ -271,18 +359,29 @@
                 maxPage:2,
                 shopId: 1,
                 value:'',
-                value9: '',
-                name: ''
+				ids: [],
+                value9: null,
+				voucherTime:null,
+                name: '',
+				ifCheck: '',
+				ifOperate: '',
+				voucherMoney:0,
+				searchPropertyDto:{
+					shopCity: '',
+					shopStatus: 0,
+					operateStatus: 0
+				}
             },
             created: function () {
             	
-                this.maxPage=this.total/this.pageSize+1;
+               
                 this.pageHandler(1);
+				this.maxPage=this.total/this.pageSize+1;
             },
             methods: {
                  detailShop(id){
                 	
-                	 this.$http.get('http://localhost:9527/operater/consumer/shopdetail/getById/'+id, {credentials: true })
+                	 this.$http.get('http://localhost/operaterconsumer/shopdetail/getShopById/'+id, {credentials: true })
                      .then(function (response) {
                     	 console.info(response.body.data);
                     	 this.shopDetail = response.data;   
@@ -311,7 +410,7 @@
                    }, 
                  audit(id){
                  	//alert(id);
-                 	 this.$http.get('http://localhost:9527/operater/consumer/shopdetail/updateStatus/'+id , {credentials: true } )
+                 	 this.$http.get('http://localhost/operaterconsumer/shopdetail/updateShopStatus/'+id , {credentials: true } )
                       .then(function (response) {
                          if( response.body.code ==0){
                         	 alert("授权成功");   
@@ -324,7 +423,7 @@
                   },
                   deleteShop(id){
                    	//alert(id);
-                   	 this.$http.get('http://localhost:9527/operater/consumer/shopdetail/deleteShop/'+id , {credentials: true } )
+                   	 this.$http.get('http://localhost/operaterconsumer/shopdetail/deleteShop/'+id , {credentials: true } )
                         .then(function (response) {
                            if( response.body.code ==0){
                           	 alert("删除成功");   
@@ -335,27 +434,28 @@
                         }); 
                     },
                     
-                    payOK(){
-                    	if(this.value9 == null){
+                    payOK(id){
+						
+                    	if(!this.value9){
                     		alert("请选择时间");
                     	}else{
-                	var time1 = JSON.stringify(this.value9).split(",")[0].split("[")[1].replace(/\"/g, "");;
-                	var time2 = JSON.stringify(this.value9).split(",")[1].split("]")[0].replace(/\"/g, "");;
-                  
-                    	this.$http.get('http://localhost:9527/operater/consumer/shopdetail/updatOrderIfTranster?shopId='+this.shopId+'&fromTime='+time1+'&toTime='+time2, {credentials: true })
-                        .then(function (response) {
-                           
-                            console.info(response.body);
-                            alert("支付成功");
-                        }, function (response) { 
-                            alert("发生错误")
-                        }); 
+							var time1 = this.value9[0];//JSON.stringify(this.value9).split(",")[0].split("[")[1].replace(/\"/g, "");;
+							var time2 = this.value9[1];//JSON.stringify(this.value9).split(",")[1].split("]")[0].replace(/\"/g, "");;
+					
+							this.$http.get('http://localhost/operaterconsumer/shopdetail/updatOrderIfTranster?shopId='+id+'&fromTime='+time1+'&toTime='+time2, {credentials: true })
+							.then(function (response) {
+							
+								console.info(response.body);
+								alert("支付成功");
+							}, function (response) { 
+								alert("发生错误")
+							}); 
                     	}
                     },
                  pay(id){
                  	//alert(id);
                  	 this.shopId = id;
-                 	 this.$http.get('http://localhost:9527/operater/consumer/shopdetail/findPayPhoto/'+id, {credentials: true })
+                 	 this.$http.get('http://localhost/operaterconsumer/shopdetail/findPayPhoto/'+id, {credentials: true })
                       .then(function (response) {
                           this.payPhoto = response.body.result; 
                           console.info(response.body);
@@ -364,21 +464,87 @@
                           alert("发生错误")
                       }); 
                   },
+				 
+				  checkVoucher(id){     
+                	 location.href="check_voucher.html?shopId="+encodeURI(id);              
+                  },
+				
+				  giveVoucher(){
+					
+					if(this.ids.length==0){
+                    	alert("请选择发放代金卷的商家");
+                    }else if(!this.voucherTime){
+						alert("请选择时间");
+					}else if(!this.checkPoNum(this.voucherMoney)){
+						alert("请输入正确的金额");
+					}else{
+						if (confirm("确定发放代金卷吗")) {
+							var time1 = this.voucherTime[0];//JSON.stringify(this.voucherTime).split(",")[0].split("[")[1].replace(/\"/g, "");
+							var time2 = this.voucherTime[1];//JSON.stringify(this.voucherTime).split(",")[1].split("]")[0].replace(/\"/g, "");
+							var str = '';
+							for (var i = 0; i < this.ids.length; i++) {
+								str = str + this.ids[i] + ',';
+							}
+							var voucherForShop={
+								money:this.voucherMoney,
+								startDate:time1,
+								deadLine:time2
+							}
+
+							//console.log(JSON.stringify(voucherForShop));
+							this.$http.post('http://localhost/operaterconsumer/product/addVoucherForShop',
+                    		{
+								money:this.voucherMoney,
+								startDate:time1,
+								deadLine:time2,
+								
+								ids: str
+								
+								}, {
+									emulateJSON: true
+								},{credentials: true } ).then(function (response) {
+									alert(response.body.result);
+									
+								}, function (response) {
+									// 发生错误
+									console.log(response);
+									alert("发生错误")
+							});
+						}
+						
+					}
+						
+                    	
+				  },
+				  changeAllChecked: function () {
+                    var _this = this;
+                    if (!this.checked) {
+                        this.shopList.forEach(function (item) {
+
+                            _this.ids.push(item.id);
+                        });
+                        
+                    } else {
+                        this.ids = [];
+
+                    }
+
+                },
                 //时间查询
                 	getDataByTime(id){
-                    	if(this.value9 == null){
+                    	if(!this.value9){
                     		alert("请选择时间");
                     	}else{
-                	var time1 = JSON.stringify(this.value9).split(",")[0].split("[")[1].replace(/\"/g, "");;
-                	var time2 = JSON.stringify(this.value9).split(",")[1].split("]")[0].replace(/\"/g, "");;
+                	var time1 = this.value9[0];//JSON.stringify(this.value9).split(",")[0].split("[")[1].replace(/\"/g, "");;
+                	var time2 = this.value9[1];//JSON.stringify(this.value9).split(",")[1].split("]")[0].replace(/\"/g, "");;
                   
-                    this.$http.get('http://localhost:9527/operater/consumer/shoporder/findTotalCost?fromTime='+time1+'&toTime='+time2+'&shopId='+id
+                    this.$http.get('http://localhost/operaterconsumer/shoporder/findTotalCost?fromTime='+time1+'&toTime='+time2+'&shopId='+id
                     		  ,{credentials: true } , {
                             emulateJSON: true
                         }).then(function (response) {
                         	
-                        	//console.info(response.body.result);
-                            this.totalcost = response.body.result;
+                        	console.info(response.body.totalcost);
+                            this.totalcost = response.body.totalcost;
                           
                         }, function (response) {
                             // 发生错误
@@ -393,7 +559,7 @@
                     this.page = page;   
                     var nam = this.name.trim();
                    //http://localhost:9527/shop/consumer/shoporder/findAllOrder/1/5/23
-                    this.$http.get('http://localhost:9527/operater/consumer/shopdetail/findAllShop?page='+this.page+'&size='+this.pageSize+'&value'+nam , {credentials: true } )
+                    this.$http.get('http://localhost/operaterconsumer/shopdetail/findAllShop?page='+this.page+'&size='+this.pageSize+'&value'+nam , {credentials: true } )
                     .then(function (response) {
                         this.shopList = response.body.rows;         
                         this.total=response.body.total;                     
@@ -405,9 +571,9 @@
                 getDataByName: function () {
                     //here you can do custom state update
                     this.page = 1;            
-                    var nam = this.name.trim();
+                    var name = this.name.trim();
                    //http://localhost:9527/shop/consumer/shoporder/findAllOrder/1/5/23
-                    this.$http.get('http://localhost:9527/operater/consumer/shopdetail/findAllShop/?page='+this.page+'&size='+this.pageSize+'&value='+nam , {credentials: true } )
+                    this.$http.get('http://localhost/operaterconsumer/shopdetail/findAllShop/?page='+this.page+'&size='+this.pageSize+'&value='+name , {credentials: true } )
                     .then(function (response) {
                         this.shopList = response.body.rows;         
                         this.total=response.body.total;                     
@@ -416,7 +582,31 @@
                     }); 
                     
                 }, 
-              
+				searchData: function () {
+                    //here you can do custom state update
+                    this.page = 1;    
+				
+					this.searchPropertyDto.shopStatus=this.ifCheck==""?0:1;
+					this.searchPropertyDto.operateStatus=this.ifOperate==""?0:1;
+				
+					
+				
+                    this.$http.get('http://localhost/operaterconsumer/shopdetail/findShopByStatus?shopCity='
+					+this.searchPropertyDto.shopCity+'&shopStatus='+this.searchPropertyDto.shopStatus+'&operateStatus='+this.searchPropertyDto.operateStatus+'&page='+this.page+'&size='+this.pageSize, {credentials: true } )
+                    .then(function (response) {
+                        this.shopList = response.body.rows;         
+                        this.total=response.body.total;                     
+                    }, function (response) {        
+                        alert("发生错误")
+                    }); 
+                    
+                }, 
+				checkPoNum(val){
+					
+					var reg = /^([1-9][0-9]*)(\.\d+)?$/;
+				//	alert(reg.test(val));
+					return reg.test(val);
+				}
             },
             
             watch: {

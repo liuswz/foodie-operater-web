@@ -1,0 +1,15 @@
+.search_div{
+    width:40%;
+    float: left;
+  
+}
+.voucher_div{
+    float: right;
+    margin-right: 40px;
+}
+.voucherMoney_input{
+    width:50px;
+    margin-left: 10px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}

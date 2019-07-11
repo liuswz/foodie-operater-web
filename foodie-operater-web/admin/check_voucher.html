@@ -5,7 +5,7 @@
     <!-- 页面meta -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>订单详情</title>
+    <title>查看代金卷</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
 
@@ -40,7 +40,7 @@
                 <!--tab头-->
                 <ul class="nav nav-tabs">
                     <li class="active">
-                        <a href="#type_tab" data-toggle="tab">订单详情</a>
+                        <a href="#type_tab" data-toggle="tab">查看代金卷</a>
                     </li>
 
 
@@ -54,7 +54,7 @@
                     <div class="tab-pane active" id="type_tab">
                         <div class="table-box">
 
-                            <!--工具栏-->
+                            <!-- 工具栏
                             <div class="pull-left">
                                 <div class="form-group form-inline">
                                     <div class="btn-group">
@@ -62,7 +62,7 @@
                                                 class="fa fa-refresh"></i> 刷新</button>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                             
                             <!--工具栏/-->
 
@@ -71,27 +71,21 @@
                                 <thead>
                                     <tr>
                                                                             
-                                       
-										<th class="sorting">菜品名称</th>
-                                      
-                                        <th class="sorting">菜品数量</th>
-                                        <th class="sorting">菜品总价</th>
+                                        <th class="sorting_asc">ID</th>
+										<th class="sorting">金额</th>                                     
+                                        <th class="sorting">起止日期</th>
+                                        <th class="sorting">截至日期</th>
 										
                                       
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="dish in dishList">
+                                    <tr v-for="voucher in voucherList">
                                       
-                                     
-                                         <td>{{dish.name}}</td>
-                                        
-                                       
-
-                                        <td>{{dish.dishNum}}</td>
-                                       
-
-                                        <td>{{dish.totalCost}}元</td>
+                                        <td>{{voucher.id}}</td>
+                                        <td>{{voucher.money}}</td>  
+                                        <td>{{voucher.startDate}}</td>                                     
+                                        <td>{{voucher.deadLine}}元</td>
 										
                                     </tr>
                                 </tbody>
@@ -131,26 +125,25 @@
         new Vue({
             el: '#all',
             data: {
-                checked: false,
-                dishList: [],
-                ids: [],
-                checkedAll: [],
-                page: 1,  //显示的是哪一页
-                pageSize: 10, //每一页显示的数据条数
-                total: 10, //记录总数
-                maxPage:2,
+             //   checked: false,
+                voucherList: [],
+               // ids: [],
+               // checkedAll: [],
+                // page: 1,  //显示的是哪一页
+                // pageSize: 10, //每一页显示的数据条数
+                // total: 10, //记录总数
+                // maxPage:2,
                 shopId:1,
                 value:'',
-                orderId : 0
+          //      orderId : 0
             },
             created: function () {
             	var loc = location.href;
           	   var n1 = loc.length;//地址的总长度
           	   var n2 = loc.indexOf("=");//取得=号的位置
-          	   var id = decodeURI(loc.substr(n2+1, n1-n2));//从=号后面的内容
+          	   this.shopId = decodeURI(loc.substr(n2+1, n1-n2));//从=号后面的内容
           	 // console.info(JSON.stringify(id.cost));
-                this.orderId = id.split("&")[0];
-                this.shopId = id.split("&shopId=")[1];
+               
                 console.info( this.shopId);
                 this.getData();
                
@@ -160,9 +153,9 @@
                 
                 getData: function () {
          
-                    this.$http.get('http://localhost:9527/operater/consumer/shoporder/findOrderItem/'+
-                        this.orderId +'/'+this.shopId,  {credentials: true } ).then(function (response) {
-                        this.dishList = response.body;           
+                    this.$http.get('http://localhost/operaterconsumer/product/getVoucherForShopById/'+
+                    this.shopId,  {credentials: true } ).then(function (response) {
+                        this.voucherList = response.body;           
                     }, function (response) {
                         // 发生错误
                       console.info(response);

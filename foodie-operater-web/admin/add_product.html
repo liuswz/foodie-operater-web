@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<!-- 页面meta -->
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>添加商品</title>
+	<!-- Tell the browser to be responsive to screen width -->
+	<meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+
+	<link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
+	<link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
+	<link rel="stylesheet" href="../css/style.css">
+	<link rel="stylesheet" href="../css/add.dishes.css">
+	<script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
+	<script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+	<script src="../plugins/jQuery/jquery.cookie.js"></script>
+	<script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+	<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+
+
+	<script src="http://gosspublic.alicdn.com/aliyun-oss-sdk-4.4.4.min.js"></script>
+
+
+
+</head>
+
+<body class="hold-transition skin-red sidebar-mini">
+
+	<!-- 正文区域 -->
+	<section class="content" id="app">
+		<!-- <form @submit.prevent="upload" method="post" enctype="multipart/form-data"> -->
+		<div class="box-body">
+
+			<!--tab页-->
+			<div class="nav-tabs-custom">
+
+				<!--tab头-->
+				<ul class="nav nav-tabs">
+					<li class="active">
+						<a href="#home" data-toggle="tab">添加商品</a>
+					</li>
+
+				</ul>
+				<!--tab头/-->
+
+				<!--tab内容-->
+				<div class="tab-content">
+
+
+					<!--表单内容-->
+					<div class="tab-pane active" id="home">
+						<div class="row data-type">
+							<div class="col-md-2 title">商品分类</div>
+
+							<div class="col-md-10 data">
+								<select class="form-control" v-model="product.productTypeId">
+									<option :value="type.id" v-for="type in typeList">{{type.typeName}}</option>
+								</select>
+							</div>
+
+						
+							<div class="col-md-2 title">商品名称</div>
+							<div class="col-md-10 data">
+								<input type="text" class="form-control" v-model.trim="product.productName" placeholder="商品名称" value="">
+							</div>
+							<div class="col-md-2 title rowHeight2x">商品介绍</div>
+							<div class="col-md-10 data rowHeight2x">
+								<textarea rows="4" class="form-control" v-model.trim="product.productIntro" placeholder="商品介绍"></textarea>
+							</div>
+
+							
+
+							<div class="col-md-2 title rowHeight2x" style="height:150px;line-height: 150px;">满减优惠</div>
+						
+							<div class="col-md-10 data rowHeight2x" style="height:150px;">
+								<div v-for="(v,i) in list" >
+
+									<select  v-model="list[i]">
+										<option :value="moneyOff.id" v-for="moneyOff in moneyOffList">满{{moneyOff.fullNum}}减{{moneyOff.minusNum}}</option>
+									</select>
+									<button class="btn btn-primary" type="button" v-on:click="deleteMoneyOff(i)">
+										删除
+									</button>
+								</div>
+								<div>
+									<button class="btn btn-primary" type="button" v-on:click="addMoneyOff">
+												添加
+									</button>
+								</div>
+							</div>
+							
+							<div class="col-md-2 title">商户价格</div>
+							<div class="col-md-10 data">
+								<input type="text" class="form-control" v-model.trim="product.priceForShop" placeholder="商户价格" value="">
+							
+							</div>
+							<div class="col-md-2 title">用户价格</div>
+							<div class="col-md-10 data">
+								<input type="text" class="form-control" v-model.trim="product.priceForUser" placeholder="用户价格" value="">
+							</div>
+						
+
+							<div class="col-md-2 title editer" style="height:250px;line-height: 250px;">商品图片</div>
+							<div class="col-md-10 data editer" style="height:250px;">
+
+								<div class="dish_file">
+									<input type="file" id="file" @change="look_photo" accept=".jpg,.png" />
+								</div>
+
+								<div class="">
+									
+
+									<img class="dish_img" id="imgshow" src="" width="200px" height="200px">
+									<button class="btn btn-primary" type="button" v-on:click="upload_photo">
+											上传
+										</button>
+
+								</div>
+							</div>
+
+
+
+						</div>
+					</div>
+
+
+
+					
+
+
+
+				</div>
+				<!--tab内容/-->
+				<!--表单内容/-->
+
+			</div>
+
+
+			<p v-if="error">
+					
+				<ul>
+					<span v-model="error" style="color: red;">{{ error }}</span>
+				</ul>
+			</p>
+
+		</div>
+		
+		<div class="btn-toolbar list-toolbar">
+			<button class="btn btn-primary" v-on:click="submit_dish"><i class="fa fa-save"></i>添加</button>
+			<!-- v-on:click="submit_dish" -->
+		</div>
+		<!-- </form> -->
+
+	</section>
+
+
+
+
+
+	<!-- 正文区域 /-->
+	<script type="text/javascript">
+
+		new Vue({
+			el: "#app",
+			//data用于存放数据或者变量
+			data: {
+				typeList: [],
+				moneyOffList:[],
+				list:[],
+				error: null,
+				product:{
+					productName:'',
+					productTypeId:null,
+					productIntro:'',
+					moneyOffIds:'',
+					priceForShop:null,
+					priceForUser:null,
+					photoUrl:null
+				}    
+		
+
+			},
+			//用于数据初始化
+			created: function () {
+				// 	client.list({
+				//       'max-keys': 10
+				//       }).then(function (result) {
+				// 		console.log(JSON.stringify(result.objects))
+				//       }).catch(function (err) {
+				// 		alert(err);
+				//   });
+				this.getProductTypeAndMoneyOff();
+				
+			},
+			//用于存放所有的事件方法集合
+			methods: {
+				deleteMoneyOff(i){
+					this.list.splice(i,1); 
+					
+				}, 
+				addMoneyOff(){
+					if(this.list.length>2){
+						alert("满减优惠不能超过3个");
+					}else{
+						this.list.push(0);
+						this.list[this.list.length-1]=this.moneyOffList[0].id;
+					}
+					
+				}, 
+				getProductTypeAndMoneyOff() {
+
+					this.$http.get('http://localhost/operaterconsumer/product/getProductTypeAndMoneyOff',
+							 {credentials: true }).then(function (response) {
+						// response.data中获取ResponseData实体
+						
+						this.typeList = response.body.productTypeList;
+						this.moneyOffList = response.body.moneyOffList;
+						this.product.productTypeId = this.typeList[0].id;
+						//   alert(response.body)
+					}, function (response) {
+						// 发生错误
+						alert("发生错误")
+					});
+				},
+				
+				look_photo: function (event) {
+					var file = $('input[type="file"]')[0].files[0];
+					//console.log(file);
+					var reader = new FileReader();
+					//使用该对象读取file文件
+					reader.readAsDataURL(file);
+					//读取文件成功后执行的方法函数
+					reader.onload = function (e) {
+						//读取成功后返回的一个参数e，整个的一个进度事件
+
+						$('#imgshow').get(0).src = e.target.result;
+					}
+				},
+				upload_photo: function (event) {
+
+					var file = $('input[type="file"]')[0].files[0];
+					var fileExt = file.name.substring(file.name.lastIndexOf("."))
+						.toLowerCase();
+					var _this=this;
+					if (!this.checkFileExt(fileExt)) {
+						alert("您上传的文件不是图片,请重新上传！");
+						//img.value = "";
+						return;
+					} else {
+
+						var photo_name = new Date().getTime() + "" + parseInt(Math.random() * 10000 + 1);
+						var last_name = "/product/" + photo_name;
+						client.multipartUpload(last_name, file).then(function (result) {
+
+							var imgUrl="https://lanke-foodie.oss-cn-beijing.aliyuncs.com"+last_name;
+							_this.product.photoUrl = imgUrl;
+							
+							alert("上传成功");
+
+						}).catch(function (err) {
+							console.log(err);
+						});
+					}
+
+
+
+
+				},
+				submit_dish() {
+		
+					if (!this.product.productTypeId) {
+						this.error='类型不能为空';
+					} else if (!this.product.productName) {
+						this.error='名称不能为空';
+					} else if (this.checkMoneyOff()) {
+						this.error='满减不能重复';
+					} else if (!this.product.productIntro) {
+						this.error='介绍不能为空';
+					} else if (!this.checkPoNum(this.product.priceForShop)) {
+						this.error='请输入正确的用户价格';
+						
+					}else if (!this.checkPoNum(this.product.priceForUser)) {
+						this.error='请输入正确的商户价格';
+					
+					} else if (!this.product.photoUrl) {
+
+						 this.error='图片不能为空';
+					} else {
+						this.upload_dish();
+					}
+
+				},
+				upload_dish() {
+				
+					var _list = this.list;
+					for(var i=0;i<_list.length;i++){
+						this.product.moneyOffIds+=_list[i]+',';
+					}
+				 	this.$http.post('http://localhost/operaterconsumer/product/addProduct',this.product, {credentials: true },{
+						}, 
+						).then(function (response) {
+							// response.data中获取ResponseData实体
+							console.log(response);
+							alert(response.body.result);
+						}, function (response) {
+							// 发生错误
+							console.log(response);
+							alert("发生错误");
+						});
+				},
+				checkMoneyOff(){
+					var _list=this.list;
+					var flag=false;
+					for(var i=0;i<_list.length-1;i++){
+						for(var j=i+1;j<_list.length;j++){
+							if(_list[i]==_list[j]){
+								flag=true;
+								break;
+							}
+						}
+					}
+					return flag;
+				},
+				checkFileExt(ext) {
+					if (!ext.match(/.jpg|.gif|.png|.bmp/i)) {
+						return false;
+					}
+					return true;
+				},
+				checkPoNum(val){
+					
+					var reg = /^([1-9][0-9]*)(\.\d+)?$/;
+					//	alert(reg.test(val));
+					return reg.test(val);
+				}
+
+			}
+
+		})
+
+
+		var client = new OSS.Wrapper({
+			region: 'oss-cn-beijing',//你的oss地址 ，具体位置见下图
+			accessKeyId: 'LTAICYbxfcsN4mvc',//你的ak
+			accessKeySecret: 'Q3JmnUHAV0OvREvyhfpsxDuFEUyQSH',//你的secret
+			secure: true,
+			//stsToken: '<Your securityToken(STS)>',//这里我暂时没用，注销掉
+			bucket: 'lanke-foodie'//你的oss名字
+		});
+
+
+	</script>
+
+</body>
+
+</html>

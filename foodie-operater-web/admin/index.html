@@ -29,10 +29,10 @@
 			  }
 		 }
          window.onload=function(){
-             console.info("http://127.0.0.1:9527/operater/consumer/shopdetail/getUsername");
+          
             $.ajax({         
 
-                url: "http://localhost:9527/operater/consumer/shopdetail/getUsername",
+                url: "http://localhost/operaterconsumer/shopdetail/getUsername",
                 type: 'GET',       
                 dataType: "json",//预期服务器返回的数据类型
                 xhrFields:{
@@ -48,7 +48,7 @@
                 	   window.location.href="../login.html";  
                    }else{
                     var username = response.result; 
-                 
+                    $.cookie('username',username);  
                     $("#name").html(username);
     		        $("#name1").html(username);      
                    }
@@ -312,7 +312,7 @@
                                         <a href="#" class="btn btn-default btn-flat">修改密码</a>
                                     </div>
                                     <div class="pull-right">
-                                        <a href="http://localhost:9527/operater/consumer/shopdetail/logout" class="btn btn-default btn-flat">注销</a>
+                                        <a href="http://localhost:9527/operater/operaterconsumer/shopdetail/logout" class="btn btn-default btn-flat">注销</a>
                                     </div>
                                 </li>
                             </ul>
@@ -358,14 +358,43 @@
 				        </a>
 				        <ul class="treeview-menu">
 				
-				            <li id="admin-login">
-				                <a href="seller_1.html" target="iframe">
-				                    <i class="fa fa-circle-o"></i>商家审核
-				                </a>
-				            </li>
+				            
 							<li id="admin-login">
 				                <a href="seller.html" target="iframe">
 				                    <i class="fa fa-circle-o"></i>商家管理
+				                </a>
+                            </li>
+                            <li id="admin-login">
+				                <a href="shoptype_manager.html" target="iframe">
+				                    <i class="fa fa-circle-o"></i>商户类型管理
+				                </a>
+				            </li>
+				        </ul>                        
+                    </li>
+                    <li class="treeview">
+				        <a href="#">
+				            <i class="fa fa-folder"></i> 
+				            <span>商品管理</span>
+				            <span class="pull-right-container">
+				       			<i class="fa fa-angle-left pull-right"></i>
+				   		 	</span>
+				        </a>
+				        <ul class="treeview-menu">
+				
+				            
+							<li id="admin-login">
+				                <a href="product_manager.html" target="iframe">
+				                    <i class="fa fa-circle-o"></i>商品管理
+				                </a>
+                            </li>
+                            <li id="admin-login">
+				                <a href="product_type_manager.html" target="iframe">
+				                    <i class="fa fa-circle-o"></i>商品类型管理
+				                </a>
+                            </li>
+                            <li id="admin-login">
+				                <a href="moneyoff_manager.html" target="iframe">
+				                    <i class="fa fa-circle-o"></i>满减类型管理
 				                </a>
 				            </li>
 				        </ul>                        
@@ -403,15 +432,11 @@
 				        <ul class="treeview-menu">
 				
 				            <li id="admin-login">
-				                <a href="content_category.html" target="iframe">
-				                    <i class="fa fa-circle-o"></i>广告类型管理
-				                </a>
-				            </li>
-							<li id="admin-login">
-				                <a href="content.html" target="iframe">
+				                <a href="ad_manager.html" target="iframe">
 				                    <i class="fa fa-circle-o"></i>广告管理
 				                </a>
 				            </li>
+						
 				        </ul>                        
 				    </li>
 				    <!-- 菜单 /-->

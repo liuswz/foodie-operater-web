@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<!-- 页面meta -->
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>广告轮播图详情</title>
+	<!-- Tell the browser to be responsive to screen width -->
+	<meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+
+	<link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
+	<link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
+	<link rel="stylesheet" href="../css/style.css">
+	<!-- <link rel="stylesheet" href="../css/add.dishes.css"> -->
+	<link rel="stylesheet" type="text/css" href="../css/cityPicker.css">
+	<style>
+	.picture_div{
+
+		float: left;
+		}
+		.url_div {
+		float: left;
+		}
+	</style>
+	<script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
+	<script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+	<script src="../plugins/jQuery/jquery.cookie.js"></script>
+	<script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+	<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+
+
+	<script src="http://gosspublic.alicdn.com/aliyun-oss-sdk-4.4.4.min.js"></script>
+
+
+
+</head>
+
+<body class="hold-transition skin-red sidebar-mini">
+
+	<!-- 正文区域 -->
+	<section class="content" id="app">
+		<!-- <form @submit.prevent="upload" method="post" enctype="multipart/form-data"> -->
+		<div class="box-body">
+
+			<!--tab页-->
+			<div class="nav-tabs-custom">
+
+				<!--tab头-->
+				<ul class="nav nav-tabs">
+					<li class="active">
+						<a href="#home" data-toggle="tab">广告轮播图详情</a>
+					</li>
+
+				</ul>
+				<!--tab头/-->
+
+				<!--tab内容-->
+				<div class="tab-content">
+
+
+					<!--表单内容-->
+					<div class="tab-pane active" id="home">
+						<div class="row data-type">
+							<div class="col-md-2 title">城市</div>
+
+							<div class="col-md-10 data">
+								<input type="text"  v-model="advertisement.city" name="shopCity"  placeholder="请输入城市名" id="cityChoice"/>
+								<input type="hidden" id="province" value="">
+								<input type="hidden" id="city" value="">
+								<input type="checkbox" name="checkbox1" v-model="ifAllCity" />全国
+							</div>
+
+
+							<div class="col-md-2 title editer" style="height:200px;line-height: 200px;">广告1</div>
+							<div class="col-md-10 data editer" style="height:200px;">
+
+								<div class="dish_file">
+									<input type="file" id="file1" @change="look_photo(1)" accept=".jpg,.png" />
+								</div>
+								<div class="picture_div">							
+									<img class="dish_img" id="imgshow1" :src="advertisement.photoUrl1" width="200px" height="150px" >
+									<button class="btn btn-primary" type="button" v-on:click="upload_photo(1)">
+											上传
+									</button>
+								</div>
+								<div class="url_div">
+									<select  v-model="advertisement.type1" style="margin-right: 20px;">
+										<option value="店家" >店家</option>
+										<option value="商品" >商品</option>
+									</select>
+									跳转Id:
+									<input type="text"  v-model.trim="advertisement.redirectId1" placeholder="跳转Id" value="">
+									<button type="button" class="btn btn-default" title="查询" @click="getgoodName(advertisement.redirectId1,advertisement.type1,0)">
+										查询	</button>
+										<span v-model="goodName[0]" v-text="goodName[0]">{{goodName[0]}}</span>
+								</div>
+							</div>
+
+
+
+							<div class="col-md-2 title editer" style="height:200px;line-height: 200px;">广告2</div>
+							<div class="col-md-10 data editer" style="height:200px;">
+
+								<div class="dish_file">
+									<input type="file" id="file2" @change="look_photo(2)" accept=".jpg,.png" />
+								</div>
+								<div class="picture_div">							
+									<img class="dish_img" id="imgshow2" :src="advertisement.photoUrl2" width="200px" height="150px" >
+									<button class="btn btn-primary" type="button" v-on:click="upload_photo(2)">
+											上传
+									</button>
+								</div>
+								<div class="url_div">
+									<select  v-model="advertisement.type2" style="margin-right: 20px;">
+										<option value="店家" >店家</option>
+										<option value="商品" >商品</option>
+									</select>
+									跳转Id:
+									<input type="text"  v-model.trim="advertisement.redirectId2" placeholder="跳转Id" value="">
+									<button type="button" class="btn btn-default" title="查询" @click="getgoodName(advertisement.redirectId2,advertisement.type2,1)">
+										查询	</button>
+										<span v-model="goodName[1]"></span>
+								</div>
+							</div>
+
+
+
+
+							<div class="col-md-2 title editer" style="height:200px;line-height: 200px;">广告3</div>
+							<div class="col-md-10 data editer" style="height:200px;">
+
+								<div class="dish_file">
+									<input type="file" id="file3" @change="look_photo(3)" accept=".jpg,.png" />
+								</div>
+								<div class="picture_div">							
+									<img class="dish_img" id="imgshow3" :src="advertisement.photoUrl3" width="200px" height="150px" >
+									<button class="btn btn-primary" type="button" v-on:click="upload_photo(3)">
+											上传
+									</button>
+								</div>
+								<div class="url_div">
+									<select  v-model="advertisement.type3" style="margin-right: 20px;">
+										<option value="店家" >店家</option>
+										<option value="商品" >商品</option>
+									</select>
+									跳转Id:
+									<input type="text"  v-model.trim="advertisement.redirectId3" placeholder="跳转Id" value="">
+									<button type="button" class="btn btn-default" title="查询" @click="getgoodName(advertisement.redirectId3,advertisement.type3,2)">
+										查询	</button>
+										<span v-model="goodName[2]"></span>
+								</div>
+							</div>
+
+
+
+							<div class="col-md-2 title editer" style="height:200px;line-height: 200px;">广告4</div>
+							<div class="col-md-10 data editer" style="height:200px;">
+
+								<div class="dish_file">
+									<input type="file" id="file4" @change="look_photo(4)" accept=".jpg,.png" />
+								</div>
+								<div class="picture_div">							
+									<img class="dish_img" id="imgshow4" :src="advertisement.photoUrl4" width="200px" height="150px" >
+									<button class="btn btn-primary" type="button" v-on:click="upload_photo(4)">
+											上传
+									</button>
+								</div>
+								<div class="url_div">
+									<select  v-model="advertisement.type4" style="margin-right: 20px;">
+										<option value="店家" >店家</option>
+										<option value="商品" >商品</option>
+									</select>
+									跳转Id:
+									<input type="text"  v-model.trim="advertisement.redirectId4" placeholder="跳转Id" value="">
+									<button type="button" class="btn btn-default" title="查询" @click="getgoodName(advertisement.redirectId4,advertisement.type4,3)">
+										查询	</button>
+										<span v-model="goodName[3]"></span>
+								</div>
+							</div>
+
+
+
+							<div class="col-md-2 title editer" style="height:200px;line-height: 200px;">广告5</div>
+							<div class="col-md-10 data editer" style="height:200px;">
+
+								<div class="dish_file">
+									<input type="file" id="file5" @change="look_photo(5)" accept=".jpg,.png" />
+								</div>
+								<div class="picture_div">							
+									<img class="dish_img" id="imgshow5" :src="advertisement.photoUrl5" width="200px" height="150px" >
+									<button class="btn btn-primary" type="button" v-on:click="upload_photo(5)">
+											上传
+									</button>
+								</div>
+								<div class="url_div">
+									<select  v-model="advertisement.type5" style="margin-right: 20px;">
+										<option value="店家" >店家</option>
+										<option value="商品" >商品</option>
+									</select>
+									跳转Id:
+									<input type="text"  v-model.trim ="advertisement.redirectId5" placeholder="跳转Id" value="">
+									<button type="button" class="btn btn-default" title="查询" @click="getgoodName(advertisement.redirectId5,advertisement.type5,4)">
+										查询	</button>
+										<span v-model="goodName[4]" ></span>
+								</div>
+							</div>
+
+
+						</div>
+					</div>
+
+
+
+
+				</div>
+				<!--tab内容/-->
+				<!--表单内容/-->
+
+			</div>
+
+
+			<p v-if="error">
+					
+				<ul>
+					<span v-model="error" style="color: red;">{{ error }}</span>
+				</ul>
+			</p>
+
+		</div>
+		
+		<div class="btn-toolbar list-toolbar">
+			<button class="btn btn-primary" v-on:click="submit_dish"><i class="fa fa-save"></i>修改</button>
+			<!-- v-on:click="submit_dish" -->
+		</div>
+		<!-- </form> -->
+
+	</section>
+
+
+
+
+
+	<!-- 正文区域 /-->
+<script type="text/javascript" src="../js/cityData.js"></script>
+<script type="text/javascript" src="../js/cityPicker.js"></script>
+<script type="text/javascript">
+ window.onload=function(){
+	var cityPicker = new IIInsomniaCityPicker({
+				data: cityData,
+				target: '#cityChoice',
+				valType: 'k-v',
+				hideCityInput: '#city',
+				hideProvinceInput: '#province',
+				callback: function(city){
+					app.advertisement.city = $("#cityChoice").val();
+				}
+			});
+			cityPicker.init();
+ 	}
+
+//		var product_photo = null;
+      
+		var app = new Vue({
+			el: "#app",
+			//data用于存放数据或者变量
+			data: {
+		
+				error: null,
+				ifAllCity :false,
+				advertisement:{
+					city:null,
+					photoUrl1:null,
+					type1:'店家',
+					redirectId1:null, 
+					photoUrl2:null,
+					type2:'店家',
+					redirectId2:null,
+					photoUrl3:null,
+					type3:'店家',
+					redirectId3:null,
+					photoUrl4:null,
+					type4:'店家',
+					redirectId4:null,
+					photoUrl5:null,
+					type5:'店家',
+					redirectId5:null,
+					
+				
+				},    
+				id:0,	
+				goodName:['','','','','']
+			},
+			//用于数据初始化
+			created: function () {
+				var loc=location.href;
+				var n1=loc.length;//地址的总长度
+				var n2=loc.indexOf("=");//取得=号的位置
+				var id=decodeURI(loc.substr(n2+1, n1-n2));//从=号后面的内容
+				this.id = id;
+
+				this.geAd();
+				
+			},
+			//用于存放所有的事件方法集合
+			methods: {
+				geAd(){
+					this.$http.get('http://localhost/operaterconsumer/advertisement/getAdvertisementById/'+this.id,
+							 {credentials: true }).then(function (response) {
+						// response.data中获取ResponseData实体
+						this.advertisement = response.body;
+						if(this.advertisement.city=='全国'){
+							this.ifAllCity=true;
+						}
+						//   alert(response.body)
+					}, function (response) {
+						// 发生错误
+						alert("发生错误")
+					});
+				},
+				getgoodName(id,type,index){
+					
+					if(this.checkPoNum(id)){
+						if(type=='店家'){
+							return this.getShopName(id,index);
+						}else{
+							return this.getProductName(id,index);
+						}
+						
+					}else{
+						alert("请输入正确的Id");
+						return true;
+					}
+				
+				}, 
+				
+				getShopName(id,index) {
+
+					this.$http.get('http://localhost/operaterconsumer/shopdetail/getShopNameById/'+id,
+							 {credentials: true }).then(function (response) {
+						// response.data中获取ResponseData实体
+						//console.log(response);
+						var val = response.body.result;
+						if(val==null){
+							alert("查不到此Id");
+							return true;
+						}else{
+							if(index!=null){
+								this.goodName.splice(index,1,val);
+							}
+							
+							return false;
+						}
+						//   alert(response.body)
+					}, function (response) {
+						// 发生错误
+						alert("发生错误")
+					});
+					return false;
+				},
+				getProductName(id,index) {
+
+					this.$http.get('http://localhost/operaterconsumer/product/getProductNameById/'+id,
+							 {credentials: true }).then(function (response) {
+						// response.data中获取ResponseData实体
+						var val = response.body.result;
+						if(val==null){
+							alert("查不到此Id");
+							return true;
+						}else{
+							if(index!=null){
+								this.goodName.splice(index,1,val);
+							}
+							return false;
+						}
+						
+						//   alert(response.body)
+					}, function (response) {
+						// 发生错误
+						alert("发生错误")
+					});
+					return false;
+				},
+				
+				look_photo: function (index) {
+					var file = $('input[type="file"]')[index-1].files[0];
+				//	console.log(file);
+					var reader = new FileReader();
+					//使用该对象读取file文件
+					reader.readAsDataURL(file);
+					//读取文件成功后执行的方法函数
+					reader.onload = function (e) {
+						//读取成功后返回的一个参数e，整个的一个进度事件
+                    
+						$('#imgshow'+index).get(0).src = e.target.result;
+					}
+				},
+				upload_photo: function (index) {
+
+					var file = $('input[type="file"]')[index-1].files[0];
+					var fileExt = file.name.substring(file.name.lastIndexOf("."))
+						.toLowerCase();
+                    var _this = this;
+					if (!this.checkFileExt(fileExt)) {
+						alert("您上传的文件不是图片,请重新上传！");
+						//img.value = "";
+						return;
+					} else {
+						var photo_name = new Date().getTime() + "" + parseInt(Math.random() * 10000 + 1);
+						var last_name = "/advertisement/" + photo_name;
+						client.multipartUpload(last_name, file).then(function (result) {
+
+						
+							var imgUrl="https://lanke-foodie.oss-cn-beijing.aliyuncs.com"+last_name;
+							_this.insertPhotoname(index,imgUrl);
+								
+								
+							//console.log(imgUrl);
+							alert("上传成功");
+						
+						}).catch(function (err) {
+							console.log(err);
+						});
+					}
+
+
+
+				},
+				insertPhotoname(index,photoName){
+					switch(index)
+					{
+						case 1:
+							this.advertisement.photoUrl1=photoName;
+							break;
+						case 2:
+							this.advertisement.photoUrl2=photoName;
+							break;
+						case 3:
+							this.advertisement.photoUrl3=photoName;
+							break;
+						case 4:
+							this.advertisement.photoUrl4=photoName;
+							break;
+						case 5:
+							this.advertisement.photoUrl5=photoName;
+							break;	
+					}
+				},
+				submit_dish() {
+					// photoUrl1:null,
+					// type1:'店家',
+					// redirectId1:null,
+					if (this.ifAllCity) {
+						this.advertisement.city='全国';
+					} 
+					if (!this.advertisement.city) {
+						this.error='城市不能为空';
+					} else if (!this.checkPoNum(this.advertisement.redirectId1)){
+						this.error='Id1必须是正整数';
+					} else if (!this.advertisement.photoUrl1) {
+						this.error='图片1不能为空';
+					}else if (!this.checkPoNum(this.advertisement.redirectId2)){
+						this.error='Id2必须是正整数';
+					}  else if (!this.advertisement.photoUrl2) {
+						this.error='图片2不能为空';
+					}else if (!this.checkPoNum(this.advertisement.redirectId3)){
+						this.error='Id3必须是正整数';
+					}  else if (!this.advertisement.photoUrl3) {
+						this.error='图片3不能为空';
+					}else if (!this.checkPoNum(this.advertisement.redirectId4)){
+						this.error='Id4必须是正整数';
+					}  else if (!this.advertisement.photoUrl4) {
+						this.error='图片4不能为空';
+					} else if (!this.checkPoNum(this.advertisement.redirectId5)){
+						this.error='Id5必须是正整数';
+					} else if (!this.advertisement.photoUrl5) {
+						this.error='图片5不能为空';
+					}  else {
+						this.upload_dish();
+					}
+
+				
+				},
+				upload_dish() {
+				
+				
+				 	this.$http.post('http://localhost/operaterconsumer/advertisement/updateAdvertisement',this.advertisement, {credentials: true },{
+						}, 
+						).then(function (response) {
+							// response.data中获取ResponseData实体
+							console.log(response);
+							alert(response.body.result);
+						}, function (response) {
+							// 发生错误
+							console.log(response);
+							alert("发生错误");
+						});
+				},
+			
+				checkFileExt(ext) {
+					if (!ext.match(/.jpg|.gif|.png|.bmp/i)) {
+						return false;
+					}
+					return true;
+				},
+				checkPoNum(val){
+					
+					var reg = /^[1-9]\d*$/;
+					//	alert(reg.test(val));
+					return reg.test(val);
+				}
+
+			}
+
+		})
+
+
+		var client = new OSS.Wrapper({
+			region: 'oss-cn-beijing',//你的oss地址 ，具体位置见下图
+			accessKeyId: 'LTAICYbxfcsN4mvc',//你的ak
+			accessKeySecret: 'Q3JmnUHAV0OvREvyhfpsxDuFEUyQSH',//你的secret
+			secure: true,
+			//stsToken: '<Your securityToken(STS)>',//这里我暂时没用，注销掉
+			bucket: 'lanke-foodie'//你的oss名字
+		});
+
+
+	</script>
+
+</body>
+
+</html>

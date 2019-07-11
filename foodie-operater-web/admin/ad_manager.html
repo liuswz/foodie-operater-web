@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- 页面meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>广告管理</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+
+    <link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="../css/zpageNav.css" rel="stylesheet" />
+
+    <script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+<script src="../plugins/jQuery/jquery.cookie.js"></script>
+    <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+    <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+
+    <script src="../js/zpageNav.js"></script>
+
+
+
+</head>
+
+<body class="hold-transition skin-red sidebar-mini">
+
+    <!-- 正文区域 -->
+    <section class="content" id="all">
+
+        <div class="box-body">
+
+            <!--tab页-->
+            <div class="nav-tabs-custom">
+
+                <!--tab头-->
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#type_tab" data-toggle="tab">广告管理</a>
+                    </li>
+
+
+                </ul>
+                <!--tab头/-->
+
+                <!--tab内容-->
+                <div class="tab-content">
+
+                    <!--表单内容-->
+                    <div class="tab-pane active" id="type_tab">
+                        <div class="table-box">
+
+                            <!--工具栏-->
+                            <div class="pull-left">
+                                <div class="form-group form-inline">
+                                    <div class="btn-group">
+                                        <a  href="add_ad.html" class="btn btn-default" title="新建"><i class="fa fa-file-o"></i>
+                                            新建</a>
+                                        
+                                        <button type="button" class="btn btn-default" title="刷新" @click="window.location.reload();"><i
+                                                class="fa fa-refresh"></i> 刷新</button>
+                                    </div>
+                                </div>
+                            </div>
+                           
+
+                            <!--数据列表-->
+                            <table id="dataList" class="table table-bordered table-striped table-hover dataTable">
+                                <thead>
+                                    <tr>
+                                      
+                                       
+                                        <th class="sorting">城市</th>
+                                        <th class="sorting">图片1</th>
+                                        <th class="sorting">图片2</th>
+                                        <th class="sorting">图片3</th>
+                                        <th class="sorting">图片4</th>
+                                        <th class="sorting">图片5</th>
+                                       
+                                        <th class="text-center">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="ad in adList">
+                                      
+                                        <td>{{ad.city}}</td>
+                                    
+                                        <td><img class="dish_img" id="imgshow" :src="ad.photoUrl1" width="100px" height="70px"></td>    
+                                        <td><img class="dish_img" id="imgshow" :src="ad.photoUrl2" width="100px" height="70px"></td>
+                                        <td><img class="dish_img" id="imgshow" :src="ad.photoUrl3" width="100px" height="70px"></td>
+                                        <td><img class="dish_img" id="imgshow" :src="ad.photoUrl4" width="100px" height="70px"></td>
+                                        <td><img class="dish_img" id="imgshow" :src="ad.photoUrl5" width="100px" height="70px"></td>                     
+                                        <td class="text-center">
+                                            <button type="button"  class="btn bg-olive btn-xs" @click="updateAd(ad.id)" >详情</button>
+                                            <button type="button"  class="btn bg-olive btn-xs" @click="delAd(ad.id)" >删除</button>
+                                        </td>
+                                      
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <!--数据列表/-->
+
+
+                        </div>
+                    </div>
+
+
+
+
+
+
+                </div>
+                <!--tab内容/-->
+                <!--表单内容/-->
+
+            </div>
+
+
+
+
+        </div>
+        <div class="wrap" id="wrap">
+            <zpagenav v-bind:page="page" v-bind:page-size="pageSize" v-bind:total="total" 
+                v-bind:max-page="maxPage"  v-on:pagehandler="pageHandler">
+            <zpagenav>
+        </div>
+
+
+    </section>
+
+
+
+    <!-- 正文区域 /-->
+    <script type="text/javascript">
+
+        new Vue({
+            el: '#all',
+            data: {
+                checked: false,
+                adList: [],
+                
+                checkedAll: [],
+                page: 1,  //显示的是哪一页
+                pageSize: 5, //每一页显示的数据条数
+                total: 10, //记录总数
+                maxPage:2,               
+                value:''
+            },
+            created: function () {
+               
+                
+                this.pageHandler(1);
+                this.maxPage=this.total/this.pageSize+1;
+            },
+            methods: {
+              
+              
+                delAd(id){
+                       //alert(id);
+                    if (confirm("确定删除吗")) {
+                        this.$http.get('http://localhost/operaterconsumer/advertisement/delAdvertisementById/'+id , {credentials: true } )
+                        .then(function (response) {
+                        if( response.body.code ==0){
+                          	 alert("删除成功");   
+                          	 this.pageHandler(1);
+                           }            
+                        }, function (response) { 
+                            alert("删除失败")
+                    }); 
+                    }
+                   	
+                },
+                pageHandler: function (page) {
+                    //here you can do custom state update
+                    this.page = page;
+                   
+                    this.$http.get('http://localhost/operaterconsumer/advertisement/findAllAdvertisement/'+this.page+'/'+this.pageSize, {credentials: true }).then(function (response) {
+                   
+                        this.adList = response.body.rows;
+                        this.total=response.body.total;
+                     //   console.log(response.body.rows);
+                    }, function (response) {
+                        // 发生错误
+                        console.log(response);
+                        alert("发生错误")
+                    }); 
+                    
+                },
+               
+                updateAd: function (id) {
+                    location.href="update_ad.html?id="+encodeURI(id);
+
+
+                }
+            },
+          
+        })
+
+    </script>
+
+</body>
+
+</html>
